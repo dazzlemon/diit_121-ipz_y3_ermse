@@ -14,6 +14,10 @@ x = np.arange(1, len(y) + 1)
     f_
 ) = approx_fun(x, y)
 
+fitargs, cov = curve_fit(f_, x, y)
+x_ = np.arange(1, len(y), 0.01)
+y_ = f_(x_, *fitargs)
+
 print(f"{x_arif=}")
 print(f"{x_geom=}")
 print(f"{x_garm=}")
@@ -30,13 +34,9 @@ print(f"{epsilon=}")
 
 print(f"{getsource(f_)}")
 
-fitargs, cov = curve_fit(f_, x, y)
-fitdata = f_(x, *fitargs)
 print("a = %3.3f; b = %3.3f" % tuple(fitargs))
 
 plt.scatter(x, y)
-plt.plot(x, fitdata, 'r--', label = 'a = %3.3f; b = %3.3f' % tuple(fitargs))
-
+plt.plot(x_, y_, 'r--', label = 'a = %3.3f; b = %3.3f' % tuple(fitargs))
 plt.legend(loc='upper left')
-
 plt.show()
