@@ -17,12 +17,17 @@ def approx_fun(x, y):
     first_after_idx = lambda list_, val: next(x for x, v in enumerate(list_) if v > val)
 
     x_arif_first_after_idx = first_after_idx(x, x_arif)
-    print(x[x_arif_first_after_idx])
+    x_geom_first_after_idx = first_after_idx(x, x_geom)
+    x_garm_first_after_idx = first_after_idx(x, x_garm)
 
+    def linear_interp(x1, y1, x2, y2, x):
+        dx = x2 - x1
+        dy = y2 - y1
+        return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
 
-    y1_star = float(input("f(%3.3f) = " % x_arif))
-    y2_star = float(input("f(%3.3f) = " % x_geom))
-    y3_star = float(input("f(%3.3f) = " % x_garm))
+    y1_star = linear_interp(x[x_arif_first_after_idx - 1], y[x_arif_first_after_idx - 1], x[x_arif_first_after_idx], y[x_arif_first_after_idx], x_arif)
+    y2_star = linear_interp(x[x_geom_first_after_idx - 1], y[x_geom_first_after_idx - 1], x[x_geom_first_after_idx], y[x_geom_first_after_idx], x_geom)
+    y3_star = linear_interp(x[x_garm_first_after_idx - 1], y[x_garm_first_after_idx - 1], x[x_garm_first_after_idx], y[x_garm_first_after_idx], x_garm)
 
     # 3
     y_arif = arif(y[0], y[-1])

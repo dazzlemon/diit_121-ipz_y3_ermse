@@ -17,10 +17,17 @@ x = np.arange(1, len(y) + 1)
 print(f"{x_arif=}")
 print(f"{x_geom=}")
 print(f"{x_garm=}")
+
+print(f"{y1_star=}")
+print(f"{y2_star=}")
+print(f"{y3_star=}")
+
 print(f"{y_arif=}")
 print(f"{y_geom=}")
 print(f"{y_garm=}")
+
 print(f"{epsilon=}")
+
 print(f"{getsource(f_)}")
 
 fitargs, cov = curve_fit(f_, x, y)
