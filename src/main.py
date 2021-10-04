@@ -5,6 +5,7 @@ from inspect import getsource
 from approx_fun import approx_fun, fit_args
 
 y = np.array([1, 3.07944, 4.29584, 5.15888, 5.82831, 6.37528, 6.83773, 7.23832, 7.59167, 7.90776])
+# y = np.array([6, 10, 14, 18, 22, 26, 30, 34, 38, 42])
 x = np.arange(1, len(y) + 1)
 (
     x_arif, x_geom, x_garm,
@@ -16,9 +17,9 @@ x = np.arange(1, len(y) + 1)
 
 f_, phi, psi, a_fun, b_fun = f
 
-# a, b = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
-fitargs, cov = curve_fit(f_, x, y)
-a, b = tuple(fitargs)
+a, b = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
+# fitargs, cov = curve_fit(f_, x, y)
+# a, b = tuple(fitargs)
 
 x_ = np.arange(1, len(y), 0.01)
 # y_ = f_(x_, *fitargs)

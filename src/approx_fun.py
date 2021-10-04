@@ -73,25 +73,24 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
     zs = psi(ys)
     # zs = A(a) + B(b) * qs
     n = len(qs)
-    a_ = (n * np.sum(qs * zs) - np.sum(qs) * np.sum(zs)) / \
+    b_ = (n * np.sum(qs * zs) - np.sum(qs) * np.sum(zs)) / \
         (n * np.sum(qs ** 2) - np.sum(qs) ** 2)
-    b_ = (np.sum(zs) - a_ * np.sum(qs)) / n
+    a_ = (np.sum(zs) - b_ * np.sum(qs)) / n
     
-    a = 0
-    if a_fun == np.log:
-        a = np.exp(a)
-    elif a_fun == np.log10:
-        a = a ** 10
-    else:
-    # elif a_fun == id_:
-        a = a_
+    def inverse_fun(fun, val):
+        v_ = 0
+        if fun == np.log:
+            v_ = np.exp(val)
+        elif fun == np.log10:
+            v_ = val ** 10
+        else:
+        # elif fun == id_:
+            v_ = val
+        return v_
 
-    b = 0
-    if b_fun == np.log:
-        b = np.exp(b)
-    else:
-    # elif b_fun == id_:
-        b = b_
+    a = inverse_fun(a_fun, a_)
+    b = inverse_fun(b_fun, b_)
+
     return a, b
 
 def linear_interp(x1, y1, x2, y2, x):
