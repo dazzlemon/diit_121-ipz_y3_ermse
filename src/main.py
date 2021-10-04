@@ -15,7 +15,7 @@ x = np.arange(1, len(y) + 1)
     f
 ) = approx_fun(x, y)
 
-f_, phi, psi, a_fun, b_fun = f
+f_, phi, psi, a_fun, b_fun, f_str = f
 
 a, b = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
 # fitargs, cov = curve_fit(f_, x, y)
@@ -25,27 +25,53 @@ x_ = np.arange(1, len(y), 0.01)
 # y_ = f_(x_, *fitargs)
 y_ = f_(x_, a, b)
 
-print(f"{x_arif=}")
-print(f"{x_geom=}")
-print(f"{x_garm=}")
+print(f"""x_n
+    = x_{len(y)}
+    = {x[-1]}""")
+print(f"""x_arif
+    = (x_1 + x_n) / 2
+    = ({x[0]} + {x[-1]}) / 2
+    = {x_arif}""")
+print(f"""x_geom
+    = sqrt(x_1 * x_n)
+    = sqrt({x[0]} * {x[-1]})
+    = {x_geom}""")
+print(f"""x_garm
+    = (2 * x_1 * x_n) / (x_1 + x_n)
+    = (2 * {x[0]} * {x[-1]}) / ({x[0]} + {x[-1]})
+    = {x_garm}""")
 
-print(f"{y1_star=}")
-print(f"{y2_star=}")
-print(f"{y3_star=}")
+print(f"""y_1^*
+    = f(x_arif)
+    = f({x_arif})
+    = {y1_star}""")
+print(f"""y_2^*
+    = f(x_geom)
+    = f({x_geom})
+    = {y2_star}""")
+print(f"""y_3^*
+    = f(x_garm)
+    = f({x_garm})
+    = {y3_star}""")
 
-print(f"{y_arif=}")
-print(f"{y_geom=}")
-print(f"{y_garm=}")
+print(f"""{y_arif=}""")
+print(f"""{y_geom=}""")
+print(f"""{y_garm=}""")
 
 print(f"{epsilon=}")
 
-print(f"{getsource(f_)}")
+print(f"f(x, a, b) = {f_str}")
 
 # print("a = %3.3f; b = %3.3f" % tuple(fitargs))
 print("a = %3.3f; b = %3.3f" % (a, b))
 
-plt.scatter(x, y)
-plt.plot(x_, y_, 'r--', label = 'a = %3.3f; b = %3.3f' % (a, b))
+plt.scatter(x, y, label='input data')
+
+x_means = np.array([x_arif, x_geom, x_garm])
+y_star  = np.array([y1_star, y2_star, y3_star])
+plt.scatter(x_means, y_star, c='#33ff00', label='x_means and theirs approx y values(linear interpolation between neighbours)')
+
+plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str};' +' a = %3.3f; b = %3.3f' % (a, b))
 # plt.plot(x_, y_, 'r--', label = 'a = %3.3f; b = %3.3f' % tuple(fitargs))
 plt.legend(loc='upper left')
 plt.show()

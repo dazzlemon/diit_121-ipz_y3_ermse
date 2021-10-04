@@ -46,14 +46,14 @@ def approx_fun(x, y):
 
     f = [
         # z = A + Bq
-        #                   y = f(x, a, b),      q = phi(x),      z = psi(y),     A(a),     B(b)
-        (lambda x, a, b:         a + b * x,             id_,             id_,      id_,      id_),
-        (lambda x, a, b:        a * b ** x,             id_,          np.log,   np.log,   np.log),
-        (lambda x, a, b:   1 / (a + b * x),             id_, lambda y: 1 / y,      id_,      id_),
-        (lambda x, a, b: a + b * np.log(x),          np.log,             id_,      id_,      id_),
-        (lambda x, a, b:        a * x ** b,        np.log10,        np.log10, np.log10,      id_),
-        (lambda x, a, b:         a + b / x, lambda x: 1 / x,             id_,      id_,      id_),
-        (lambda x, a, b:   x / (a + b * x), lambda x: 1 / x, lambda y: 1 / y,      id_,      id_),
+        #                   y = f(x, a, b),      q = phi(x),      z = psi(y),     A(a),     B(b), str repr
+        (lambda x, a, b:         a + b * x,             id_,             id_,      id_,      id_, 'a + b * x'),
+        (lambda x, a, b:        a * b ** x,             id_,          np.log,   np.log,   np.log, 'a * b ^ x'),
+        (lambda x, a, b:   1 / (a + b * x),             id_, lambda y: 1 / y,      id_,      id_, '1 / (a + b * x)'),
+        (lambda x, a, b: a + b * np.log(x),          np.log,             id_,      id_,      id_, 'a + b * log(x)'),
+        (lambda x, a, b:        a * x ** b,        np.log10,        np.log10, np.log10,      id_, 'a * x ^ b'),
+        (lambda x, a, b:         a + b / x, lambda x: 1 / x,             id_,      id_,      id_, 'a + b / x'),
+        (lambda x, a, b:   x / (a + b * x), lambda x: 1 / x, lambda y: 1 / y,      id_,      id_, 'x / (a + b * x)'),
     ]
 
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
@@ -77,6 +77,7 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
         (n * np.sum(qs ** 2) - np.sum(qs) ** 2)
     a_ = (np.sum(zs) - b_ * np.sum(qs)) / n
     
+    # fun(x) = val, returns x, fun = np.log | np.log10 | id_
     def inverse_fun(fun, val):
         v_ = 0
         if fun == np.log:
