@@ -84,7 +84,7 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
         if fun == np.log:
             v_ = np.exp(val)
         elif fun == np.log10:
-            v_ = val ** 10
+            v_ = 10 ** val
         else:
         # elif fun == id_:
             v_ = val

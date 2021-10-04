@@ -78,7 +78,7 @@ def print_fun(prefix, argname, fun):
     print(prefix, end='')
     if fun == id_:
         print(f'{argname}')
-    if fun == np.log:
+    elif fun == np.log:
         print(f'log({argname})')
     elif fun == np.log10:
         print(f'lg({argname})')
@@ -106,7 +106,21 @@ print(f"""A
     = (sum(zs) - B * sum(qs)) / n
     = ({np.sum(zs):{fp}} - {b_:{fp}} * {np.sum(qs):{fp}}) / {n:{fp}}
     = {a_:{fp}}""")
-print(f"a = {a:{fp}}; b = {b:{fp}}")
+
+def print_inv(prefix, argname, argval, fun, val):
+    print(prefix, end='')
+    if fun == id_:
+        print(argname, end='')
+    elif fun == np.log:
+        print(f'e^{argname:{fp}} = e^{argval:{fp}}', end='')
+    elif fun == np.log10:
+        print(f'10^{argname:{fp}} = 10^{argval:{fp}}', end='')
+    elif fun == inv:
+        print(f'1 / {argname:{fp}} = 1 / {argval:{fp}}', end='')
+    print(f' = {val:{fp}}')
+
+print_inv('a = ', 'A', a_, a_fun, a)
+print_inv('b = ', 'B', b_, a_fun, b)
 
 plt.scatter(x, y, label='input data')
 
