@@ -17,13 +17,14 @@ x = np.arange(1, len(y) + 1)
 
 f_, phi, psi, a_fun, b_fun, f_str = f
 
-a, b, a_, b_ = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
+a, b, a_, b_, qs, zs = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
 
 x_ = np.arange(1, len(y), 0.01)
 y_ = f_(x_, a, b)
+n = len(y)
 
 print(f"""x_n
-    = x_{len(y)}
+    = x_{n}
     = {x[-1]}""")
 print(f"""x_arif
     = (x_1 + x_n) / 2
@@ -52,7 +53,7 @@ print(f"""y_3^*
     = {y3_star}""")
 
 print(f"""y_n
-    = y_{len(y)}
+    = y_{n}
     = {y[-1]}""")
 print(f"""y_arif
     = (y_1 + y_n) / 2
@@ -90,7 +91,18 @@ print_fun('A = ', 'a', a_fun)
 print_fun('B = ', 'b', b_fun)
 print('z = A + Bq')
 
-print("A = %3.3f; B = %3.3f" % (a_, b_))
+print(f"{qs=}")
+print(f"{zs=}")
+print(f"""B
+    = (n * sum(qs * zs) - sum(qs) * sum(zs)) /
+        (n * sum(qs ** 2) - sum(qs) ** 2)
+    = ({n} * {np.sum(qs * zs)} - {np.sum(qs)} * {np.sum(zs)}) /
+        ({n} * {np.sum(qs ** 2)} - {np.sum(qs) ** 2})
+    """)
+print("""   = %3.3f""" % b_)
+print("""A
+    = (sum(zs) - B * sum(qs)) / n
+    = %3.3f""" % a_)
 print("a = %3.3f; b = %3.3f" % (a, b))
 
 plt.scatter(x, y, label='input data')

@@ -68,8 +68,8 @@ def approx_fun(x, y):
     )
 
 FloatMap = Callable[[float], float]
-def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap) -> (float, float, float, float):
-    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b),         a,     b,    a_,    b_
+def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap):
+    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b)
     qs = phi(xs)
     zs = psi(ys)
     # zs = A(a) + B(b) * qs
@@ -93,7 +93,7 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
     a = inverse_fun(a_fun, a_)
     b = inverse_fun(b_fun, b_)
 
-    return a, b, a_, b_
+    return a, b, a_, b_, qs, zs
 
 def linear_interp(x1, y1, x2, y2, x):
     dx = x2 - x1
