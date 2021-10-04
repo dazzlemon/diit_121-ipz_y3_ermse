@@ -3,6 +3,8 @@ import numpy as np
 from scipy.optimize import curve_fit
 from inspect import getsource
 from approx_fun import approx_fun, fit_args, id_, inv
+from pylatex import Document, Section, Subsection, Tabular, Math, TikZ, Axis, \
+    Plot, Figure, Matrix, Alignat
 
 y = np.array([1, 3.07944, 4.29584, 5.15888, 5.82831, 6.37528, 6.83773, 7.23832, 7.59167, 7.90776])
 # y = np.array([6, 10, 14, 18, 22, 26, 30, 34, 38, 42])
@@ -122,15 +124,41 @@ def print_inv(prefix, argname, argval, fun, val):
 print_inv('a = ', 'A', a_, a_fun, a)
 print_inv('b = ', 'B', b_, a_fun, b)
 
-plt.scatter(x, y, label='input data')
+def plot():
+    plt.scatter(x, y, label='input data')
 
-x_means = np.array([x_arif, x_geom, x_garm])
-y_star  = np.array([y1_star, y2_star, y3_star])
-plt.scatter(x_means, y_star, c='#33ff00', label='x_means and theirs approx y values(linear interpolation between neighbours)')
-plt.annotate('x_arif', (x_arif, y1_star))
-plt.annotate('x_geom', (x_geom, y2_star))
-plt.annotate('x_garm', (x_garm, y3_star))
+    x_means = np.array([x_arif, x_geom, x_garm])
+    y_star  = np.array([y1_star, y2_star, y3_star])
+    plt.scatter(x_means, y_star, c='#33ff00', label='x_means and theirs approx y values(linear interpolation between neighbours)')
+    plt.annotate('x_arif', (x_arif, y1_star))
+    plt.annotate('x_geom', (x_geom, y2_star))
+    plt.annotate('x_garm', (x_garm, y3_star))
 
-plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str}; a = {a:{fp}}; b = {b:{fp}}')
-plt.legend(loc='upper left')
-plt.show()
+    plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str}; a = {a:{fp}}; b = {b:{fp}}')
+    plt.legend(loc='upper left')
+    plt.show() 
+
+def doc_gen():
+    geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
+    doc = Document(geometry_options=geometry_options)
+
+    with doc.create(Section('Lab1')):
+        with doc.create(Subsection('Step 1')):
+            with doc.create(Alignat(numbering=False, escape=False)) as agn:
+                agn.append(r'x_{arif} = \frac {x_1 + x_n} 2 \\')
+                agn.append('x_n = x_{%d} = {%3.3f} \\\\' % (n, x[-1]))
+                agn.append("""x_{arif}
+                    = \\frac {x_1 + x_n} 2
+                    = \\frac {%3.3f + %3.3f} 2
+                    = %3.3f \\\\""" % (x[0], x[-1], x_arif))
+                agn.append("""x_{geom}
+                    = \sqrt{x_1 * x_n}
+                    = \sqrt{%3.3f * %3.3f}
+                    = %3.3f \\\\""" % (x[0], x[-1], x_geom))
+                agn.append("""x_{garm}
+                    = \\frac {2 * x_1 * x_n} {x_1 + x_n}
+                    = \\frac {2 * %3.3f * %3.3f} {%3.3f + %3.3f}
+                    = %3.3f""" % (x[0], x[-1], x[0], x[-1], x_garm))
+
+    doc.generate_pdf('full', clean_tex=False)
+doc_gen()
