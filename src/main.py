@@ -91,19 +91,22 @@ print_fun('A = ', 'a', a_fun)
 print_fun('B = ', 'b', b_fun)
 print('z = A + Bq')
 
+# float precision
+fp = '.2f'
+
 print(f"{qs=}")
 print(f"{zs=}")
 print(f"""B
     = (n * sum(qs * zs) - sum(qs) * sum(zs)) /
         (n * sum(qs ** 2) - sum(qs) ** 2)
-    = ({n} * {np.sum(qs * zs)} - {np.sum(qs)} * {np.sum(zs)}) /
-        ({n} * {np.sum(qs ** 2)} - {np.sum(qs) ** 2})
-    """)
-print("""   = %3.3f""" % b_)
-print("""A
+    = ({n:{fp}} * {np.sum(qs * zs):{fp}} - {np.sum(qs):{fp}} * {np.sum(zs):{fp}}) /
+        ({n:{fp}} * {np.sum(qs ** 2):{fp}} - {np.sum(qs) ** 2:{fp}})
+    = {b_:{fp}}""")
+print(f"""A
     = (sum(zs) - B * sum(qs)) / n
-    = %3.3f""" % a_)
-print("a = %3.3f; b = %3.3f" % (a, b))
+    = ({np.sum(zs):{fp}} - {b_:{fp}} * {np.sum(qs):{fp}}) / {n:{fp}}
+    = {a_:{fp}}""")
+print(f"a = {a:{fp}}; b = {b:{fp}}")
 
 plt.scatter(x, y, label='input data')
 
@@ -114,6 +117,6 @@ plt.annotate('x_arif', (x_arif, y1_star))
 plt.annotate('x_geom', (x_geom, y2_star))
 plt.annotate('x_garm', (x_garm, y3_star))
 
-plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str};' +' a = %3.3f; b = %3.3f' % (a, b))
+plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str}; a = {a:{fp}}; b = {b:{fp}}')
 plt.legend(loc='upper left')
 plt.show()
