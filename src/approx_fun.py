@@ -46,13 +46,13 @@ def approx_fun(x, y):
     f = [
         # z = A + Bq
         #                   y = f(x, a, b),      q = phi(x),      z = psi(y),     A(a),     B(b)
-        (lambda x, a, b:         a + b * x,             id_,             id_,      id_,      id_)
-        (lambda x, a, b:        a * b ** x,             id_,          np.log,   np.log,   np.log)
-        (lambda x, a, b:   1 / (a + b * x),             id_, lambda y: 1 / y,      id_,      id_)
-        (lambda x, a, b: a + b * np.log(x),          np.log,             id_,      id_,      id_)
-        (lambda x, a, b:        a * x ** b,        np.log10,        np.log10, np.log10,      id_)
-        (lambda x, a, b:         a + b / x, lambda x: 1 / x,             id_,      id_,      id_)
-        (lambda x, a, b:   x / (a + b * x), lambda x: 1 / x, lambda y: 1 / y,      id_,      id_)
+        (lambda x, a, b:         a + b * x,             id_,             id_,      id_,      id_),
+        (lambda x, a, b:        a * b ** x,             id_,          np.log,   np.log,   np.log),
+        (lambda x, a, b:   1 / (a + b * x),             id_, lambda y: 1 / y,      id_,      id_),
+        (lambda x, a, b: a + b * np.log(x),          np.log,             id_,      id_,      id_),
+        (lambda x, a, b:        a * x ** b,        np.log10,        np.log10, np.log10,      id_),
+        (lambda x, a, b:         a + b / x, lambda x: 1 / x,             id_,      id_,      id_),
+        (lambda x, a, b:   x / (a + b * x), lambda x: 1 / x, lambda y: 1 / y,      id_,      id_),
     ]
 
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
