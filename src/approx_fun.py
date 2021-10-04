@@ -1,6 +1,7 @@
 from math import sqrt
 from operator import itemgetter
 import numpy as np
+from typing import Callable
 
 # points are sorted by x from lowest to highest
 def approx_fun(x, y):
@@ -62,8 +63,36 @@ def approx_fun(x, y):
         y1_star, y2_star, y3_star,
         y_arif, y_geom, y_garm,
         epsilon,
-        f_
+        f[epsilon_min_idx]
     )
+
+FloatMap = Callable[[float], float]
+def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap) -> (float, float):
+    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b),         a,     b
+    qs = phi(xs)
+    zs = psi(ys)
+    # zs = A(a) + B(b) * qs
+    n = len(qs)
+    a_ = (n * np.sum(qs * zs) - np.sum(qs) * np.sum(zs)) / \
+        (n * np.sum(qs ** 2) - np.sum(qs) ** 2)
+    b_ = (np.sum(zs) - a_ * np.sum(qs)) / n
+    
+    a = 0
+    if a_fun == np.log:
+        a = np.exp(a)
+    elif a_fun == np.log10:
+        a = a ** 10
+    else:
+    # elif a_fun == id_:
+        a = a_
+
+    b = 0
+    if b_fun == np.log:
+        b = np.exp(b)
+    else:
+    # elif b_fun == id_:
+        b = b_
+    return a, b
 
 def linear_interp(x1, y1, x2, y2, x):
     dx = x2 - x1
