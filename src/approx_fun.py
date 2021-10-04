@@ -3,6 +3,10 @@ from operator import itemgetter
 import numpy as np
 from typing import Callable
 
+# identity function
+id_ = lambda x: x
+inv = lambda x: 1 / x
+
 # points are sorted by x from lowest to highest
 def approx_fun(x, y):
     arif = lambda a, b: (a + b) / 2
@@ -41,19 +45,16 @@ def approx_fun(x, y):
         abs(y3_star - y_garm),
     ]
 
-    # identity function
-    id_ = lambda x: x
-
     f = [
         # z = A + Bq
-        #                   y = f(x, a, b),      q = phi(x),      z = psi(y),     A(a),     B(b), str repr
-        (lambda x, a, b:         a + b * x,             id_,             id_,      id_,      id_, 'a + b * x'),
-        (lambda x, a, b:        a * b ** x,             id_,          np.log,   np.log,   np.log, 'a * b ^ x'),
-        (lambda x, a, b:   1 / (a + b * x),             id_, lambda y: 1 / y,      id_,      id_, '1 / (a + b * x)'),
-        (lambda x, a, b: a + b * np.log(x),          np.log,             id_,      id_,      id_, 'a + b * log(x)'),
-        (lambda x, a, b:        a * x ** b,        np.log10,        np.log10, np.log10,      id_, 'a * x ^ b'),
-        (lambda x, a, b:         a + b / x, lambda x: 1 / x,             id_,      id_,      id_, 'a + b / x'),
-        (lambda x, a, b:   x / (a + b * x), lambda x: 1 / x, lambda y: 1 / y,      id_,      id_, 'x / (a + b * x)'),
+        #                   y = f(x, a, b), q = phi(x),      z = psi(y),     A(a),     B(b), str repr
+        (lambda x, a, b:         a + b * x,        id_,             id_,      id_,      id_, 'a + b * x'),
+        (lambda x, a, b:        a * b ** x,        id_,          np.log,   np.log,   np.log, 'a * b ^ x'),
+        (lambda x, a, b:   1 / (a + b * x),        id_,             inv,      id_,      id_, '1 / (a + b * x)'),
+        (lambda x, a, b: a + b * np.log(x),     np.log,             id_,      id_,      id_, 'a + b * log(x)'),
+        (lambda x, a, b:        a * x ** b,   np.log10,        np.log10, np.log10,      id_, 'a * x ^ b'),
+        (lambda x, a, b:         a + b / x,        inv,             id_,      id_,      id_, 'a + b / x'),
+        (lambda x, a, b:   x / (a + b * x),        inv,             inv,      id_,      id_, 'x / (a + b * x)'),
     ]
 
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
@@ -62,13 +63,13 @@ def approx_fun(x, y):
         x_arif, x_geom, x_garm,
         y1_star, y2_star, y3_star,
         y_arif, y_geom, y_garm,
-        epsilon,
+        epsilon, epsilon_min_idx,
         f[epsilon_min_idx]
     )
 
 FloatMap = Callable[[float], float]
-def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap) -> (float, float):
-    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b),         a,     b
+def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap) -> (float, float, float, float):
+    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b),         a,     b,    a_,    b_
     qs = phi(xs)
     zs = psi(ys)
     # zs = A(a) + B(b) * qs
@@ -92,7 +93,7 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
     a = inverse_fun(a_fun, a_)
     b = inverse_fun(b_fun, b_)
 
-    return a, b
+    return a, b, a_, b_
 
 def linear_interp(x1, y1, x2, y2, x):
     dx = x2 - x1
