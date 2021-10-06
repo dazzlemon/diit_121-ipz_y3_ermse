@@ -22,25 +22,20 @@ def approx_fun(x, y):
     ]
 
     # 2
-    y1_star = np.interp(x_means[0], x, y)
-    y2_star = np.interp(x_means[1], x, y)
-    y3_star = np.interp(x_means[2], x, y)
+    y_star = np.interp(x_means, x, y)
 
     # 3
-    y_arif = arif(y[0], y[-1])
-    y_geom = geom(y[0], y[-1])
-    y_garm = garm(y[0], y[-1])
+    y_means = [
+        arif(y[0], y[-1]),
+        geom(y[0], y[-1]),
+        garm(y[0], y[-1]),
+    ]
 
     # 4
-    epsilon = [
-        abs(y1_star - y_arif),
-        abs(y1_star - y_geom),
-        abs(y1_star - y_garm),
-        abs(y2_star - y_arif),
-        abs(y2_star - y_geom),
-        abs(y3_star - y_arif),
-        abs(y3_star - y_garm),
-    ]
+    epsilon = np.absolute(
+        np.take(y_star,  [0, 0, 0, 1, 1, 2, 2]) -
+        np.take(y_means, [0, 1, 2, 0, 1, 0, 2])
+    )
 
     function_form = [
         # z = A + Bq
@@ -57,8 +52,8 @@ def approx_fun(x, y):
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
     return (
         x_means[0], x_means[1], x_means[2],
-        y1_star, y2_star, y3_star,
-        y_arif, y_geom, y_garm,
+        y_star[0], y_star[1], y_star[2],
+        y_means[0], y_means[1], y_means[2],
         epsilon, epsilon_min_idx,
         function_form[epsilon_min_idx]
     )
