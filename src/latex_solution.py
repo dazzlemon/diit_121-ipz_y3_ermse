@@ -32,12 +32,25 @@ def latex_solution(
                         = {y_star[i]:{fpr}} \\\\""")
 
         print_means_subsection(doc, 'Step 3', y, 'y', y_means, fpr)
+        
+        with doc.create(Subsection('Step 4')):
+            with doc.create(Alignat(numbering=False, escape=False)) as agn:
+                mean_names = ["arif", "geom", "garm"]
+                y_star_order = [0, 0, 0, 1, 1, 2, 2]
+                y_mean_order = [0, 1, 2, 0, 1, 0, 2]
+                for i, y_star_i, y_mean_i in zip(range(7), y_star_order, y_mean_order):
+                    print_epsilon(
+                        agn, i + 1, f"y_{y_star_i + 1}^*", f"y_{{{mean_names[y_mean_i]}}}",
+                        y_star[y_star_i], y_means[y_mean_i], epsilon[i], fpr)
         # step 4 = epsilon -> epsilon_min -> f(x, a, b)
         # step 5 -> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
         # step 6 -> qs, zs -> A, B -> a, b
         # step 7 plot xy etc
 
     doc.generate_pdf('full', clean_tex=False)
+
+def print_epsilon(agn, n, name1, name2, val1, val2, res, fpr):
+    agn.append(f"\\varepsilon_{n} = |{name1} - {name2}| = |{val1:{fpr}} - {val2:{fpr}}| = {res:{fpr}} \\\\")
 
 def print_means_subsection(doc, subsection_name, arr, arrname, means, fpr):
     with doc.create(Subsection(subsection_name)):
