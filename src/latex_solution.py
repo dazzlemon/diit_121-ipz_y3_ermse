@@ -32,6 +32,10 @@ def latex_solution(
                         = {y_star[i]:{fpr}} \\\\""")
 
         print_means_subsection(doc, 'Step 3', y, 'y', y_means, fpr)
+        # step 4 = epsilon -> epsilon_min -> f(x, a, b)
+        # step 5 -> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
+        # step 6 -> qs, zs -> A, B -> a, b
+        # step 7 plot xy etc
 
     doc.generate_pdf('full', clean_tex=False)
 
