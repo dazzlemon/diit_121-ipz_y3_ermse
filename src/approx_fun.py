@@ -6,19 +6,28 @@ from scipy.stats import gmean, hmean
 id_ = lambda x: x
 inv = lambda x: 1 / x
 
+fun_linear    = lambda x, a, b:         a + b * x
+fun_exp       = lambda x, a, b:        a * b ** x
+fun_frac      = lambda x, a, b:   1 / (a + b * x)
+fun_log       = lambda x, a, b: a + b * np.log(x)
+fun_pow       = lambda x, a, b:        a * x ** b
+fun_hyperbole = lambda x, a, b:         a + b / x
+fun_frac2     = lambda x, a, b:   x / (a + b * x)
+
 function_form = [
     # z = A + Bq
-    #                   y = f(x, a, b), q = phi(x),      z = psi(y),     A(a),     B(b), str repr
-    (lambda x, a, b:         a + b * x,        id_,             id_,      id_,      id_, 'a + b * x'),
-    (lambda x, a, b:        a * b ** x,        id_,          np.log,   np.log,   np.log, 'a * b ^ x'),
-    (lambda x, a, b:   1 / (a + b * x),        id_,             inv,      id_,      id_, '1 / (a + b * x)'),
-    (lambda x, a, b: a + b * np.log(x),     np.log,             id_,      id_,      id_, 'a + b * log(x)'),
-    (lambda x, a, b:        a * x ** b,   np.log10,        np.log10, np.log10,      id_, 'a * x ^ b'),
-    (lambda x, a, b:         a + b / x,        inv,             id_,      id_,      id_, 'a + b / x'),
-    (lambda x, a, b:   x / (a + b * x),        inv,             inv,      id_,      id_, 'x / (a + b * x)'),
+    # y = f(x, a, b), q = phi(x),      z = psi(y),     A(a),     B(b), str repr
+    (fun_linear     ,        id_,             id_,      id_,      id_, 'a + b * x'),
+    (fun_exp        ,        id_,          np.log,   np.log,   np.log, 'a * b ^ x'),
+    (fun_frac       ,        id_,             inv,      id_,      id_, '1 / (a + b * x)'),
+    (fun_log        ,     np.log,             id_,      id_,      id_, 'a + b * log(x)'),
+    (fun_pow        ,   np.log10,        np.log10, np.log10,      id_, 'a * x ^ b'),
+    (fun_hyperbole  ,        inv,             id_,      id_,      id_, 'a + b / x'),
+    (fun_frac2      ,        inv,             inv,      id_,      id_, 'x / (a + b * x)'),
 ]
 
 def means(arr):
+    """Returns array of arithmetic, geometric and harmonic means for argument array"""
     return np.array([
         np.mean(arr),
         gmean(arr),
@@ -39,31 +48,37 @@ def approx_fun(xs_arr, ys_arr):
     )
     return (x_means, y_star, y_means, epsilon)
 
-# fun(x) = val, returns x, fun = np.log | np.log10 | id_
 def inverse_fun(fun, val):
-    v_ = 0
+    """fun(x) = val, returns x, fun = np.log | np.log10 | id_"""
+    inv_val = 0
     if fun == np.log:
-        v_ = np.exp(val)
+        inv_val = np.exp(val)
     elif fun == np.log10:
-        v_ = 10 ** val
+        inv_val = 10 ** val
     else:
     # elif fun == id_:
-        v_ = val
-    return v_
+        inv_val = val
+    return inv_val
 
-def fit_args(xs, ys, function_form_n):
+def fit_args(xs_arr, ys_arr, function_form_n):
+    """
+    Finds args for function_form #n that fit given data the best,
+    also returns solution steps
+    """
     _, phi, psi, a_fun, b_fun, _ = function_form[function_form_n]
 
     # zs = A(a) + B(b) * qs
-    qs = phi(xs)
-    zs = psi(ys)
+    phi_xs = phi(xs_arr)
+    psi_ys = psi(ys_arr)
 
-    n = len(qs)
-    b_ = (n * np.sum(qs * zs) - np.sum(qs) * np.sum(zs)) / \
-        (n * np.sum(qs ** 2) - np.sum(qs) ** 2)
-    a_ = (np.sum(zs) - b_ * np.sum(qs)) / n
+    data_len = len(phi_xs)
+    mapped_arg1 = (
+        (data_len * np.sum(phi_xs * psi_ys) - np.sum(phi_xs) * np.sum(psi_ys)) /
+        (data_len * np.sum(phi_xs ** 2)     - np.sum(phi_xs) ** 2)
+    )
+    mapped_arg2 = (np.sum(psi_ys) - mapped_arg1 * np.sum(phi_xs)) / data_len
 
-    a = inverse_fun(a_fun, a_)
-    b = inverse_fun(b_fun, b_)
+    arg1 = inverse_fun(a_fun, mapped_arg2)
+    arg2 = inverse_fun(b_fun, mapped_arg1)
 
-    return a, b, a_, b_, qs, zs
+    return arg1, arg2, mapped_arg2, mapped_arg1, phi_xs, psi_ys
