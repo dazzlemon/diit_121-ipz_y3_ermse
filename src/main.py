@@ -26,13 +26,9 @@ y_arif, y_geom, y_garm = y_means
 
 latex_solution(
     data,
-    phi, psi, a_fun, b_fun, f_str,
-    x_arif, x_geom, x_garm,
-    y1_star, y2_star, y3_star,
-    y_arif, y_geom, y_garm,
+    x_means, y_star, y_means,
     epsilon, epsilon_min_idx,
-    a, b, a_, b_,
-    qs, zs
+    (a, b), (a_, b_), (qs, zs)
 )
 print_solution_to_console(
     data,
