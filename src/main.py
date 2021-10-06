@@ -44,4 +44,4 @@ print_solution_to_console(
     a, b, a_, b_,
     qs, zs
 )
-plot(x, y, x_, y_, x_means, y_star, f_str, a, b)
+plot((x, y), (x_, y_), np.array([x_means, y_star]), f_str, (a, b))
