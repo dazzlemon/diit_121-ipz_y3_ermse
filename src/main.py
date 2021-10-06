@@ -38,7 +38,7 @@ def plot():
 
     plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str}; a = {a:{FP}}; b = {b:{FP}}')
     plt.legend(loc='upper left')
-    plt.show() 
+    plt.show()
 
 latex_solution(
     data,
@@ -60,3 +60,4 @@ print_solution_to_console(
     a, b, a_, b_,
     qs, zs
 )
+plot()

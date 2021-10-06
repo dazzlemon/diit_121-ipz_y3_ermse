@@ -1,8 +1,7 @@
 from math import sqrt
 from operator import itemgetter
 import numpy as np
-from typing import Callable, Tuple
-from numbers import Number
+from typing import Callable
 
 # identity function
 id_ = lambda x: x
@@ -20,19 +19,9 @@ def approx_fun(x, y):
     x_garm = garm(x[0], x[-1])
 
     # 2
-    # first elemenet thats > val
-    first_after_idx = lambda list_, val: next(x for x, v in enumerate(list_) if v > val)
-    # linear interp of x_val with closest neigbours
-    def linear_interp_x(x_val, right_idx):
-        return linear_interp(
-            (x[right_idx - 1], x[right_idx]),
-            (y[right_idx - 1], y[right_idx]),
-            x_val
-        )
-
-    y1_star = linear_interp_x(x_arif, first_after_idx(x, x_arif))
-    y2_star = linear_interp_x(x_geom, first_after_idx(x, x_geom))
-    y3_star = linear_interp_x(x_garm, first_after_idx(x, x_garm))
+    y1_star = np.interp(x_arif, x, y)
+    y2_star = np.interp(x_geom, x, y)
+    y3_star = np.interp(x_garm, x, y)
 
     # 3
     y_arif = arif(y[0], y[-1])
@@ -98,11 +87,3 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
     b = inverse_fun(b_fun, b_)
 
     return a, b, a_, b_, qs, zs
-
-Range = Tuple[Number, Number]
-
-def linear_interp(range1: Range, range2: Range, val):
-    """Maps value from range1 to range2"""
-    delta1 = range1[1] - range1[0]
-    delta2 = range2[1] - range2[0]
-    return range2[0] + (delta2 / delta1) * (val - range1[0])
