@@ -1,7 +1,7 @@
 """TODO: DOCSTRING"""
 import matplotlib.pyplot as plt
 import numpy as np
-from approx_fun import approx_fun, fit_args
+from approx_fun import approx_fun, fit_args, function_form
 from console_solution import print_solution_to_console, FP
 from latex_solution import latex_solution
 
@@ -11,15 +11,9 @@ x = np.arange(1, len(y) + 1)
 
 data = (x, y)
 
-(
-    x_means,
-    y_star,
-    y_means,
-    epsilon, epsilon_min_idx,
-    f
-) = approx_fun(x, y)
-
-f_, phi, psi, a_fun, b_fun, f_str = f
+(x_means, y_star, y_means, epsilon) = approx_fun(x, y)
+epsilon_min_idx = np.argmin(epsilon)
+f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
 
 a, b, a_, b_, qs, zs = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
 

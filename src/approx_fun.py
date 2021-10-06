@@ -39,12 +39,7 @@ def approx_fun(xs_arr, ys_arr):
         np.take(y_star,  [0, 0, 0, 1, 1, 2, 2]) -
         np.take(y_means, [0, 1, 2, 0, 1, 0, 2])
     )
-    epsilon_min_idx = np.argmin(epsilon)
-    return (
-        x_means, y_star, y_means,
-        epsilon, epsilon_min_idx,
-        function_form[epsilon_min_idx]
-    )
+    return (x_means, y_star, y_means, epsilon)
 
 FloatMap = Callable[[float], float]
 def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap):
