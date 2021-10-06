@@ -17,20 +17,60 @@
 \subsection{Step 1}%
 \label{subsec:Step1}%
 \begin{alignat*}{2}%
-x_{arif} = \frac {x_1 + x_n} 2 \\%
 x_n = x_{10} = {10.000} \\%
 x_{arif}
-                    = \frac {x_1 + x_n} 2
-                    = \frac {1.000 + 10.000} 2
-                    = 5.500 \\%
+        = \frac {x_1 + x_n} 2
+        = \frac {1.000 + 10.000} 2
+        = 5.500 \\%
 x_{geom}
                     = \sqrt{x_1 * x_n}
                     = \sqrt{1.000 * 10.000}
                     = 3.162 \\%
 x_{garm}
                     = \frac {2 * x_1 * x_n} {x_1 + x_n}
-                    = \frac {2 * 1.000 * 10.000} {1.000 + 10.000}
+                    = \frac 
+                        {2 * 1.000 * 10.000}
+                        {1.000 + 10.000}
                     = 1.818%
+\end{alignat*}
+
+%
+\subsection{Step 2}%
+\label{subsec:Step2}%
+\begin{alignat*}{2}%
+y_1^*
+                        = f(x_{arif})
+                        = f(5.500)
+                        = 6.102 \\%
+y_2^*
+                        = f(x_{geom})
+                        = f(3.162)
+                        = 4.436 \\%
+y_3^*
+                        = f(x_{garm})
+                        = f(1.818)
+                        = 2.701 \\%
+\end{alignat*}
+
+%
+\subsection{Step 3}%
+\label{subsec:Step3}%
+\begin{alignat*}{2}%
+y_n
+                    = y_{10}
+                    = 7.90776%
+y_{arif}
+                    = (y_1 + y_n) / 2
+                    = (1.0 + 7.90776
+                    = 4.45388%
+y_geom
+                    = sqrt(y1 * y_n)
+                    = sqrt(1.0 * 7.90776)
+                    = 2.8120739677327125%
+y_garm
+                    = (2 * y_1 * y_n) / (y1 + yn)
+                    = (2 * 1.0 * 7.90776) / (1.0 + 7.90776)
+                    = 2.8120739677327125%
 \end{alignat*}
 
 %
