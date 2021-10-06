@@ -12,9 +12,9 @@ x = np.arange(1, len(y) + 1)
 data = (x, y)
 
 (
-    x_arif, x_geom, x_garm,
-    y1_star, y2_star, y3_star,
-    y_arif, y_geom, y_garm,
+    x_means,
+    y_star,
+    y_means,
     epsilon, epsilon_min_idx,
     f
 ) = approx_fun(x, y)
@@ -29,8 +29,6 @@ y_ = f_(x_, a, b)
 def plot():
     plt.scatter(x, y, label='input data')
 
-    x_means = np.array([x_arif, x_geom, x_garm])
-    y_star  = np.array([y1_star, y2_star, y3_star])
     plt.scatter(x_means, y_star, c='#33ff00', label='x_means and theirs approx y values(linear interpolation between neighbours)')
     plt.annotate('x_arif', (x_arif, y1_star))
     plt.annotate('x_geom', (x_geom, y2_star))
@@ -39,6 +37,10 @@ def plot():
     plt.plot(x_, y_, 'r--', label = f'approximation, f(x, a, b) = {f_str}; a = {a:{FP}}; b = {b:{FP}}')
     plt.legend(loc='upper left')
     plt.show()
+
+x_arif, x_geom, x_garm = x_means
+y1_star, y2_star, y3_star = y_star
+y_arif, y_geom, y_garm = y_means
 
 latex_solution(
     data,
