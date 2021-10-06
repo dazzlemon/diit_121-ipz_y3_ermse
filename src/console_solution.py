@@ -1,6 +1,7 @@
 """TODO: DOCSTRING"""
 import numpy as np
 from approx_fun import id_, inv
+from typing import Tuple
 
 # float precision
 FP = '.2f'
@@ -31,7 +32,7 @@ def print_inv(prefix, argname, argval, fun, val):
     print(f' = {val:{FP}}')
 
 def print_solution_to_console(
-    x, y,
+    data: Tuple[np.array, np.array],
     phi, psi, a_fun, b_fun, f_str,
     x_arif, x_geom, x_garm,
     y1_star, y2_star, y3_star,
@@ -40,6 +41,7 @@ def print_solution_to_console(
     a, b, a_, b_,
     qs, zs
 ):
+    x, y = data
     """TODO: DOCSTRING"""
     n = len(y)
     

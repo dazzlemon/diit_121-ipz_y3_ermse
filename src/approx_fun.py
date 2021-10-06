@@ -1,7 +1,8 @@
 from math import sqrt
 from operator import itemgetter
 import numpy as np
-from typing import Callable
+from typing import Callable, Tuple
+from numbers import Number
 
 # identity function
 id_ = lambda x: x
@@ -23,7 +24,11 @@ def approx_fun(x, y):
     first_after_idx = lambda list_, val: next(x for x, v in enumerate(list_) if v > val)
     # linear interp of x_val with closest neigbours
     def linear_interp_x(x_val, right_idx):
-        return linear_interp(x[right_idx - 1], y[right_idx - 1], x[right_idx], y[right_idx], x_val)
+        return linear_interp(
+            (x[right_idx - 1], x[right_idx]),
+            (y[right_idx - 1], y[right_idx]),
+            x_val
+        )
 
     y1_star = linear_interp_x(x_arif, first_after_idx(x, x_arif))
     y2_star = linear_interp_x(x_geom, first_after_idx(x, x_geom))
@@ -45,7 +50,7 @@ def approx_fun(x, y):
         abs(y3_star - y_garm),
     ]
 
-    f = [
+    function_form = [
         # z = A + Bq
         #                   y = f(x, a, b), q = phi(x),      z = psi(y),     A(a),     B(b), str repr
         (lambda x, a, b:         a + b * x,        id_,             id_,      id_,      id_, 'a + b * x'),
@@ -58,13 +63,12 @@ def approx_fun(x, y):
     ]
 
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
-    f_ = f[epsilon_min_idx][0]
     return (
         x_arif, x_geom, x_garm,
         y1_star, y2_star, y3_star,
         y_arif, y_geom, y_garm,
         epsilon, epsilon_min_idx,
-        f[epsilon_min_idx]
+        function_form[epsilon_min_idx]
     )
 
 FloatMap = Callable[[float], float]
@@ -95,7 +99,10 @@ def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, p
 
     return a, b, a_, b_, qs, zs
 
-def linear_interp(x1, y1, x2, y2, x):
-    dx = x2 - x1
-    dy = y2 - y1
-    return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
+Range = Tuple[Number, Number]
+
+def linear_interp(range1: Range, range2: Range, val):
+    """Maps value from range1 to range2"""
+    delta1 = range1[1] - range1[0]
+    delta2 = range2[1] - range2[0]
+    return range2[0] + (delta2 / delta1) * (val - range1[0])
