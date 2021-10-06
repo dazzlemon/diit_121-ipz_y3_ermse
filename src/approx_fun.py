@@ -1,7 +1,5 @@
-from math import sqrt
-from operator import itemgetter
+"""TODO: DOCTSTRING"""
 import numpy as np
-from typing import Callable
 from scipy.stats import gmean, hmean
 
 # identity function
@@ -41,28 +39,29 @@ def approx_fun(xs_arr, ys_arr):
     )
     return (x_means, y_star, y_means, epsilon)
 
-FloatMap = Callable[[float], float]
-def fit_args(xs, ys, f: Callable[[float, float, float], float], phi: FloatMap, psi: FloatMap, a_fun: FloatMap, b_fun: FloatMap):
-    #                                           y = f(x, a, b),   q = phi(x),     z = psi(y),            A(a),            B(b)
+# fun(x) = val, returns x, fun = np.log | np.log10 | id_
+def inverse_fun(fun, val):
+    v_ = 0
+    if fun == np.log:
+        v_ = np.exp(val)
+    elif fun == np.log10:
+        v_ = 10 ** val
+    else:
+    # elif fun == id_:
+        v_ = val
+    return v_
+
+def fit_args(xs, ys, function_form_n):
+    _, phi, psi, a_fun, b_fun, _ = function_form[function_form_n]
+
+    # zs = A(a) + B(b) * qs
     qs = phi(xs)
     zs = psi(ys)
-    # zs = A(a) + B(b) * qs
+
     n = len(qs)
     b_ = (n * np.sum(qs * zs) - np.sum(qs) * np.sum(zs)) / \
         (n * np.sum(qs ** 2) - np.sum(qs) ** 2)
     a_ = (np.sum(zs) - b_ * np.sum(qs)) / n
-    
-    # fun(x) = val, returns x, fun = np.log | np.log10 | id_
-    def inverse_fun(fun, val):
-        v_ = 0
-        if fun == np.log:
-            v_ = np.exp(val)
-        elif fun == np.log10:
-            v_ = 10 ** val
-        else:
-        # elif fun == id_:
-            v_ = val
-        return v_
 
     a = inverse_fun(a_fun, a_)
     b = inverse_fun(b_fun, b_)

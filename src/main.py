@@ -15,7 +15,7 @@ data = (x, y)
 epsilon_min_idx = np.argmin(epsilon)
 f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
 
-a, b, a_, b_, qs, zs = fit_args(x, y, f_, phi, psi, a_fun, b_fun)
+a, b, a_, b_, qs, zs = fit_args(x, y, epsilon_min_idx)
 
 x_ = np.arange(1, len(y), 0.01)
 y_ = f_(x_, a, b)
