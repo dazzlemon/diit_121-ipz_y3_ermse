@@ -7,21 +7,24 @@ from typing import Callable
 id_ = lambda x: x
 inv = lambda x: 1 / x
 
+# means
+arif = lambda a, b: (a + b) / 2
+geom = lambda a, b: sqrt(a * b)
+garm = lambda a, b: (2 * a * b) / (a + b)
+
 # points are sorted by x from lowest to highest
 def approx_fun(x, y):
-    arif = lambda a, b: (a + b) / 2
-    geom = lambda a, b: sqrt(a * b)
-    garm = lambda a, b: (2 * a * b) / (a + b)
-
     # 1
-    x_arif = arif(x[0], x[-1])
-    x_geom = geom(x[0], x[-1])
-    x_garm = garm(x[0], x[-1])
+    x_means = [
+        arif(x[0], x[-1]),# arithmetic
+        geom(x[0], x[-1]),# geometric
+        garm(x[0], x[-1]),# harmonic
+    ]
 
     # 2
-    y1_star = np.interp(x_arif, x, y)
-    y2_star = np.interp(x_geom, x, y)
-    y3_star = np.interp(x_garm, x, y)
+    y1_star = np.interp(x_means[0], x, y)
+    y2_star = np.interp(x_means[1], x, y)
+    y3_star = np.interp(x_means[2], x, y)
 
     # 3
     y_arif = arif(y[0], y[-1])
@@ -53,7 +56,7 @@ def approx_fun(x, y):
 
     epsilon_min_idx = min(enumerate(epsilon), key=itemgetter(1))[0]
     return (
-        x_arif, x_geom, x_garm,
+        x_means[0], x_means[1], x_means[2],
         y1_star, y2_star, y3_star,
         y_arif, y_geom, y_garm,
         epsilon, epsilon_min_idx,
