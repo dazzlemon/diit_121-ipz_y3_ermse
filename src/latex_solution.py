@@ -1,6 +1,7 @@
 """TODO: DOCSTRING"""
 from pylatex import Document, Section, Subsection, Alignat
-from approx_fun import function_form
+from approx_fun import function_form, id_, inv
+import numpy as np
 
 def latex_solution(
     data,
@@ -50,13 +51,49 @@ def latex_solution(
                     y \\approx {f_str}""")
     
     with doc.create(Section('Fitting arguments')):
-        pass
+        with doc.create(Subsection('Transformation of coordinates from xOy to qOz')):
+            with doc.create(Alignat(numbering=False, escape=False)) as agn:
+                agn.append(fun_str('q = phi(x) = ', 'x', phi))
+                agn.append(fun_str('z = psi(y) = ', 'y', psi))
+                agn.append(fun_str('A = ', 'a', a_fun))
+                agn.append(fun_str('B = ', 'b', b_fun))
+                agn.append('z = A + Bq')
+        
+        with doc.create(Subsection('Fitting arguments for linear function in qOz')):
+            qs, zs = mapped_data
+            a_, b_ = args_mapped
+            a, b   = args
+            n = len(x)
+            with doc.create(Alignat(numbering=False, escape=False)) as agn:
+                agn.append(f"""B
+                    = \\frac {{n * \\sum\\limits_{{i = 1}}^n {{q_i * z_i}} - \\sum\\limits_{{i = 1}}^n {{q_i}} * \\sum\\limits_{{i = 1}}^n {{z_i}}}}
+                        {{n * \\sum\\limits_{{i = 1}}^n {{q_i^2}} - (\\sum\\limits_{{i = 1}}^n {{q_i}}) ^ 2}}
+                    = \\frac {{{n} * {np.sum(qs * zs):{fpr}} - {np.sum(qs):{fpr}} * {np.sum(zs):{fpr}}}}
+                        {{{n} * {np.sum(qs ** 2):{fpr}} - {np.sum(qs) ** 2:{fpr}}}}
+                    = {b_:{fpr}} \\\\""")
+                agn.append(f"""A
+                    = \\frac {{\\sum\\limits_{{i = 1}}^n {{z_i}} - B * \\sum\\limits_{{i = 1}}^{{n}} {{q_i}}}} n
+                    = \\frac {{{np.sum(zs):{fpr}} - {b_:{fpr}} * {np.sum(qs):{fpr}}}} {{{n}}}
+                    = {a_:{fpr}} \\\\""")
 
         #-> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
         #-> qs, zs -> A, B -> a, b
         #plot xy etc
 
     doc.generate_pdf('full', clean_tex=False)
+
+def fun_str(prefix, argname, fun):
+    """TODO: DOCSTRING"""
+    result = prefix
+    if fun == id_:
+        result += f'{argname} \\\\'
+    elif fun == np.log:
+        result += f'log({argname}) \\\\'
+    elif fun == np.log10:
+        result += f'lg({argname}) \\\\'
+    elif fun == inv:
+        result += f'\\frac 1 {{{argname}}} \\\\'
+    return result
 
 def print_epsilon(agn, n, name1, name2, val1, val2, res, fpr):
     agn.append(f"\\varepsilon_{n} = |{name1} - {name2}| = |{val1:{fpr}} - {val2:{fpr}}| = {res:{fpr}} \\\\")
