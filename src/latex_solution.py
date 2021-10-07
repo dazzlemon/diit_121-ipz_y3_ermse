@@ -20,10 +20,10 @@ def latex_solution(
 
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
-    with doc.create(Section('Lab1')):
-        print_means_subsection(doc, 'Step 1', x, 'x', x_means, fpr)
+    with doc.create(Section('Finding function form')):
+        print_means_subsection(doc, 'Mean values of x', x, 'x', x_means, fpr)
 
-        with doc.create(Subsection('Step 2')):
+        with doc.create(Subsection('Interpolated y values for mean values of x')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 for i, name in enumerate(['arif', 'geom', 'garm']):
                     agn.append(f"""y_{i + 1}^*
@@ -31,9 +31,9 @@ def latex_solution(
                         = f({x_means[i]:{fpr}})
                         = {y_star[i]:{fpr}} \\\\""")
 
-        print_means_subsection(doc, 'Step 3', y, 'y', y_means, fpr)
+        print_means_subsection(doc, 'Mean values of y', y, 'y', y_means, fpr)
         
-        with doc.create(Subsection('Step 4')):
+        with doc.create(Subsection('Choosing function form according to epsilon error')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 mean_names = ["arif", "geom", "garm"]
                 y_star_order = [0, 0, 0, 1, 1, 2, 2]
@@ -42,10 +42,19 @@ def latex_solution(
                     print_epsilon(
                         agn, i + 1, f"y_{y_star_i + 1}^*", f"y_{{{mean_names[y_mean_i]}}}",
                         y_star[y_star_i], y_means[y_mean_i], epsilon[i], fpr)
-        # step 4 = epsilon -> epsilon_min -> f(x, a, b)
-        # step 5 -> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
-        # step 6 -> qs, zs -> A, B -> a, b
-        # step 7 plot xy etc
+                agn.append(f"""\\Rightarrow \\\\
+                    \\varepsilon_{{min}}
+                    = \\varepsilon_{epsilon_min_idx + 1}
+                    = {epsilon[epsilon_min_idx]:{fpr}} \\\\""")
+                agn.append(f"""\\Rightarrow \\\\
+                    y \\approx {f_str}""")
+    
+    with doc.create(Section('Fitting arguments')):
+        pass
+
+        #-> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
+        #-> qs, zs -> A, B -> a, b
+        #plot xy etc
 
     doc.generate_pdf('full', clean_tex=False)
 
