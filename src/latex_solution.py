@@ -88,9 +88,9 @@ def latex_solution(
             with doc.create(Figure(position='htbp')) as plot_:
                 x_ = np.arange(1, len(y), 0.01)
                 y_ = f_(x_, a, b)
-                font = {'size'   : 6}
+                font = {'size'   : 4}
                 matplotlib.rc('font', **font)
-                plot(data, (x_, y_), np.array([x_means, y_star]), f_str, args)
+                plot(data, (x_, y_), np.array([x_means, y_star]), y_means, f_str, args)
                 plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)
