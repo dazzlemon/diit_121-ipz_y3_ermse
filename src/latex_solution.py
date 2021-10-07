@@ -33,7 +33,7 @@ def latex_solution(
                         = {y_star[i]:{fpr}} \\\\""")
 
         print_means_subsection(doc, 'Mean values of y', y, 'y', y_means, fpr)
-        
+
         with doc.create(Subsection('Choosing function form according to epsilon error')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 mean_names = ["arif", "geom", "garm"]
@@ -49,7 +49,7 @@ def latex_solution(
                     = {epsilon[epsilon_min_idx]:{fpr}} \\\\""")
                 agn.append(f"""\\Rightarrow \\\\
                     y \\approx {f_str}""")
-    
+
     with doc.create(Section('Fitting arguments')):
         with doc.create(Subsection('Transformation of coordinates from xOy to qOz')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
@@ -58,7 +58,7 @@ def latex_solution(
                 agn.append(fun_str('A = ', 'a', a_fun))
                 agn.append(fun_str('B = ', 'b', b_fun))
                 agn.append('z = A + Bq')
-        
+
         with doc.create(Subsection('Fitting arguments for linear function in qOz')):
             qs, zs = mapped_data
             a_, b_ = args_mapped
@@ -96,7 +96,8 @@ def fun_str(prefix, argname, fun):
     return result
 
 def print_epsilon(agn, n, name1, name2, val1, val2, res, fpr):
-    agn.append(f"\\varepsilon_{n} = |{name1} - {name2}| = |{val1:{fpr}} - {val2:{fpr}}| = {res:{fpr}} \\\\")
+    agn.append(f"""\\varepsilon_{n}
+        = |{name1} - {name2}| = |{val1:{fpr}} - {val2:{fpr}}| = {res:{fpr}} \\\\""")
 
 def print_means_subsection(doc, subsection_name, arr, arrname, means, fpr):
     with doc.create(Subsection(subsection_name)):
