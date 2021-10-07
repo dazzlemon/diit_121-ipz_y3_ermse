@@ -1,6 +1,7 @@
 """TODO: DOCSTRING"""
 from pylatex import Document, Section, Subsection, Alignat
-from approx_fun import function_form, id_, inv
+from approx_fun import (function_form, id_, inv,
+    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow)
 import numpy as np
 
 def latex_solution(
@@ -15,7 +16,7 @@ def latex_solution(
     xs, ys = [Num]
     """
     x, y = data
-    _, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
+    f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
 
     fpr = '3.3f'# floating precision
 
@@ -76,11 +77,45 @@ def latex_solution(
                     = \\frac {{{np.sum(zs):{fpr}} - {b_:{fpr}} * {np.sum(qs):{fpr}}}} {{{n}}}
                     = {a_:{fpr}} \\\\""")
 
-        #-> xyab => qzAB -> y = f(x, a, b) => z = A + Bq
-        #-> qs, zs -> A, B -> a, b
-        #plot xy etc
+        with doc.create(Subsection('Mapping arguments back to xOy')):
+            with doc.create(Alignat(numbering=False, escape=False)) as agn:
+                agn.append(inv_fun_str('a = ', 'A', a_, a_fun, a, fpr))
+                agn.append(inv_fun_str('b = ', 'B', b_, a_fun, b, fpr))
+                agn.append(fun2_str('y \\approx', f'{a:{fpr}}', f'{b:{fpr}}', f_))
 
     doc.generate_pdf('full', clean_tex=False)
+
+def fun2_str(prefix, arg1, arg2, fun):
+    result = prefix
+    if fun == fun_linear:
+        result += f'{arg1} + {arg2} * x'
+    if fun == fun_exp:
+        result += f'{arg1} * {arg2} ^ x'
+    if fun == fun_frac:
+        result += f'1 / ({arg1} + {arg2} * x)'
+    if fun == fun_log:
+        result += f'{arg1} + {arg2} * log(x)'
+    if fun == fun_pow:
+        result += f'{arg1} * x ^ {arg2}'
+    if fun == fun_hyperbole:
+        result += f'{arg1} + {arg2} / x'
+    if fun == fun_frac2:
+        result += f'x / ({arg1} + {arg2} * x)'
+    return result
+
+def inv_fun_str(prefix, argname, argval, fun, val, fpr):
+    """TODO: DOCSTRING"""
+    result = prefix
+    if fun == id_:
+        result += argname
+    elif fun == np.log:
+        result += f'e^{argname:{fpr}} = e^{argval:{fpr}}'
+    elif fun == np.log10:
+        result += f'10^{argname:{fpr}} = 10^{argval:{fpr}}'
+    elif fun == inv:
+        result += f'1 / {argname:{fpr}} = 1 / {argval:{fpr}}'
+    result += f' = {val:{fpr}} \\\\'
+    return result
 
 def fun_str(prefix, argname, fun):
     """TODO: DOCSTRING"""
