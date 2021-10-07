@@ -24,4 +24,3 @@ def plot(data, interpolated_data, interp_points, f_str, args):
         label = f'approximation, f(x, a, b) = {f_str}; a = {args[0]:{FP}}; b = {args[1]:{FP}}'
     )
     plt.legend(loc='upper left')
-    plt.show()

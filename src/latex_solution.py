@@ -1,8 +1,10 @@
 """TODO: DOCSTRING"""
-from pylatex import Document, Section, Subsection, Alignat
+from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape
 from approx_fun import (function_form, id_, inv,
     fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow)
 import numpy as np
+from matplotlib_solution import plot
+import matplotlib
 
 def latex_solution(
     data,
@@ -82,6 +84,14 @@ def latex_solution(
                 agn.append(inv_fun_str('a = ', 'A', a_, a_fun, a, fpr))
                 agn.append(inv_fun_str('b = ', 'B', b_, a_fun, b, fpr))
                 agn.append(fun2_str('y \\approx', f'{a:{fpr}}', f'{b:{fpr}}', f_))
+
+            with doc.create(Figure(position='htbp')) as plot_:
+                x_ = np.arange(1, len(y), 0.01)
+                y_ = f_(x_, a, b)
+                font = {'size'   : 6}
+                matplotlib.rc('font', **font)
+                plot(data, (x_, y_), np.array([x_means, y_star]), f_str, args)
+                plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)
 

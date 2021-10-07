@@ -4,6 +4,7 @@ from approx_fun import approx_fun, fit_args, function_form
 from console_solution import print_solution_to_console
 from latex_solution import latex_solution
 from matplotlib_solution import plot
+import matplotlib.pyplot as plt
 
 y = np.array([1, 3.07944, 4.29584, 5.15888, 5.82831, 6.37528, 6.83773, 7.23832, 7.59167, 7.90776])
 # y = np.array([6, 10, 14, 18, 22, 26, 30, 34, 38, 42])
@@ -40,4 +41,5 @@ print_solution_to_console(
     a, b, a_, b_,
     qs, zs
 )
-plot((x, y), (x_, y_), np.array([x_means, y_star]), f_str, (a, b))
+# plot((x, y), (x_, y_), np.array([x_means, y_star]), f_str, (a, b))
+# plt.show()
