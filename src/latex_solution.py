@@ -1,5 +1,5 @@
 """TODO: DOCSTRING"""
-from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape
+from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, LongTable
 from approx_fun import (function_form, id_, inv,
     fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow)
 import numpy as np
@@ -24,6 +24,8 @@ def latex_solution(
 
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
+    print_data_table(doc, 'x', 'y', x, y)
+
     with doc.create(Section('Finding function form')):
         print_means_subsection(doc, 'Mean values of x', x, 'x', x_means, fpr)
 
@@ -54,6 +56,7 @@ def latex_solution(
                     y \\approx {f_str}""")
 
     with doc.create(Section('Fitting arguments')):
+        qs, zs = mapped_data
         with doc.create(Subsection('Transformation of coordinates from xOy to qOz')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 agn.append(fun_str('q = phi(x) = ', 'x', phi))
@@ -62,8 +65,11 @@ def latex_solution(
                 agn.append(fun_str('B = ', 'b', b_fun))
                 agn.append('z = A + Bq')
 
+        qs_str = [f'{q:{fpr}}' for q in qs]
+        zs_str = [f'{z:{fpr}}' for z in zs]
+        print_data_table(doc, 'q', 'z', qs_str, zs_str)
+
         with doc.create(Subsection('Fitting arguments for linear function in qOz')):
-            qs, zs = mapped_data
             a_, b_ = args_mapped
             a, b   = args
             n = len(x)
@@ -94,6 +100,16 @@ def latex_solution(
                 plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)
+
+def print_data_table(doc, name1, name2, arr1, arr2):
+    with doc.create(LongTable("l l l")) as data_table:
+        data_table.add_hline()
+        data_table.add_row(["#", name1, name2])
+        data_table.add_hline()
+        data_table.end_table_header()
+
+        for i, v1, v2 in zip(range(1, len(arr1) + 1), arr1, arr2):
+            data_table.add_row([i, v1, v2])
 
 def fun2_str(prefix, arg1, arg2, fun):
     result = prefix

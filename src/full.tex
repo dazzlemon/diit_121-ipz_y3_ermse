@@ -6,6 +6,7 @@
 \usepackage{lastpage}%
 \usepackage{geometry}%
 \geometry{tmargin=1cm,lmargin=1cm}%
+\usepackage{longtable}%
 \usepackage{amsmath}%
 \usepackage{graphicx}%
 %
@@ -13,6 +14,22 @@
 %
 \begin{document}%
 \normalsize%
+\begin{longtable}{l l l}%
+\hline%
+\#&x&y\\%
+\hline%
+\endhead%
+1&1&1.0\\%
+2&2&3.07944\\%
+3&3&4.29584\\%
+4&4&5.15888\\%
+5&5&5.82831\\%
+6&6&6.37528\\%
+7&7&6.83773\\%
+8&8&7.23832\\%
+9&9&7.59167\\%
+10&10&7.90776\\%
+\end{longtable}%
 \section{Finding function form}%
 \label{sec:Findingfunctionform}%
 \subsection{Mean values of x}%
@@ -110,6 +127,22 @@ z = A + Bq%
 \end{alignat*}
 
 %
+\begin{longtable}{l l l}%
+\hline%
+\#&q&z\\%
+\hline%
+\endhead%
+1&0.000&1.000\\%
+2&0.693&3.079\\%
+3&1.099&4.296\\%
+4&1.386&5.159\\%
+5&1.609&5.828\\%
+6&1.792&6.375\\%
+7&1.946&6.838\\%
+8&2.079&7.238\\%
+9&2.197&7.592\\%
+10&2.303&7.908\\%
+\end{longtable}%
 \subsection{Fitting arguments for linear function in qOz}%
 \label{subsec:FittingargumentsforlinearfunctioninqOz}%
 \begin{alignat*}{2}%
@@ -137,7 +170,7 @@ y \approx1.000 + 3.000 * log(x)%
 
 \begin{figure}[htbp]%
 \centering%
-\includegraphics[width=1\textwidth]{/tmp/pylatex-tmp.g_zw4wa4/208e5108-57c8-46c4-b56b-493288debdee.pdf}%
+\includegraphics[width=1\textwidth]{/tmp/pylatex-tmp.84_jjmf3/aa1af0a0-3535-44ca-b91c-c29b33d1dbe5.pdf}%
 \end{figure}
 
 %
