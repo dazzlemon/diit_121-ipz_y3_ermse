@@ -102,13 +102,9 @@ def print_fit_args(
                 agn.append(fun2_str('y \\approx', f'{a:{fpr}}', f'{b:{fpr}}', f_))
 
             with doc.create(Figure(position='htbp')) as plot_:
-                x_ = np.arange(1, data[0][-1], 0.01)
-                y_ = f_(x_, a, b)
                 font = {'size'   : 4}
                 matplotlib.rc('font', **font)
-                plot(
-                    data, (x_, y_), np.array([approx_fun_result.x_means, approx_fun_result.y_star]),
-                    approx_fun_result.y_means, f_str, fit_args_result.args)
+                plot(data, approx_fun_result, fit_args_result)
                 plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
 def print_data_table(doc, name1, name2, arr1, arr2):
