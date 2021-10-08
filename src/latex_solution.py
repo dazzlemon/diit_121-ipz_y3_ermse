@@ -3,7 +3,8 @@ from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, Lo
 import numpy as np
 import matplotlib
 from approx_fun import (function_form, id_, inv,
-    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow, ApproxFunResult, FitArgsResult)
+    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear,
+    fun_log, fun_pow, ApproxFunResult, FitArgsResult)
 from matplotlib_solution import plot
 
 def latex_solution(data, approx_fun_result: ApproxFunResult, fit_args_result: FitArgsResult):
@@ -56,21 +57,16 @@ def print_find_fun(doc, data, approx_fun_result, fpr):
                 agn.append(f"""\\Rightarrow \\\\
                     y \\approx {f_str}""")
 
-def print_fit_args(doc, data, approx_fun_result: ApproxFunResult, fit_args_result: FitArgsResult, fpr):
-    args = fit_args_result.args
-    args_mapped = fit_args_result.args_mapped
-    mapped_data = fit_args_result.mapped_data
-
+def print_fit_args(
+    doc, data, approx_fun_result: ApproxFunResult, fit_args_result: FitArgsResult, fpr
+):
+    """prints solution to argument fitting with provided results"""
     epsilon_min_idx = np.argmin(approx_fun_result.errors)
-    x_means = approx_fun_result.x_means
-    y_star  = approx_fun_result.y_star
-    y_means = approx_fun_result.y_means
+    f_, phi, psi, a_fun, b_fun, f_str = \
+        function_form[epsilon_min_idx]
 
-    f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
-    x, y = data
-    
     with doc.create(Section('Fitting arguments')):
-        qs, zs = mapped_data
+        qs, zs = fit_args_result.mapped_data
         with doc.create(Subsection('Transformation of coordinates from xOy to qOz')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 agn.append(fun_str('q = phi(x) = ', 'x', phi))
@@ -84,9 +80,9 @@ def print_fit_args(doc, data, approx_fun_result: ApproxFunResult, fit_args_resul
         print_data_table(doc, 'q', 'z', qs_str, zs_str)
 
         with doc.create(Subsection('Fitting arguments for linear function in qOz')):
-            a_, b_ = args_mapped
-            a, b   = args
-            n = len(x)
+            a_, b_ = fit_args_result.args_mapped
+            a, b   = fit_args_result.args
+            n = len(data[0])
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 agn.append(f"""B
                     = \\frac {{n * \\sum\\limits_{{i = 1}}^n {{q_i * z_i}} - \\sum\\limits_{{i = 1}}^n {{q_i}} * \\sum\\limits_{{i = 1}}^n {{z_i}}}}
@@ -106,14 +102,17 @@ def print_fit_args(doc, data, approx_fun_result: ApproxFunResult, fit_args_resul
                 agn.append(fun2_str('y \\approx', f'{a:{fpr}}', f'{b:{fpr}}', f_))
 
             with doc.create(Figure(position='htbp')) as plot_:
-                x_ = np.arange(1, len(y), 0.01)
+                x_ = np.arange(1, data[0][-1], 0.01)
                 y_ = f_(x_, a, b)
                 font = {'size'   : 4}
                 matplotlib.rc('font', **font)
-                plot(data, (x_, y_), np.array([x_means, y_star]), y_means, f_str, args)
+                plot(
+                    data, (x_, y_), np.array([approx_fun_result.x_means, approx_fun_result.y_star]),
+                    approx_fun_result.y_means, f_str, fit_args_result.args)
                 plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
 def print_data_table(doc, name1, name2, arr1, arr2):
+    """prints numbered table with provided names and values"""
     with doc.create(LongTable("l l l")) as data_table:
         data_table.add_hline()
         data_table.add_row(["#", name1, name2])
@@ -124,6 +123,7 @@ def print_data_table(doc, name1, name2, arr1, arr2):
             data_table.add_row([i, v1, v2])
 
 def fun2_str(prefix, arg1, arg2, fun):
+    """prints function with provided args"""
     result = prefix
     if fun == fun_linear:
         result += f'{arg1} + {arg2} * x'
@@ -169,10 +169,12 @@ def fun_str(prefix, argname, fun):
     return result
 
 def print_epsilon(agn, n, name1, name2, val1, val2, res, fpr):
+    """prints error with provided values"""
     agn.append(f"""\\varepsilon_{n}
         = |{name1} - {name2}| = |{val1:{fpr}} - {val2:{fpr}}| = {res:{fpr}} \\\\""")
 
 def print_means_subsection(doc, subsection_name, arr, arrname, means, fpr):
+    """prints means(of first and last element) of provided array"""
     with doc.create(Subsection(subsection_name)):
         with doc.create(Alignat(numbering=False, escape=False)) as agn:
             agn.append(f'{arrname}_n = {arrname}_{{{len(arr)}}} = {{{arr[-1]:{fpr}}}} \\\\')
@@ -180,8 +182,9 @@ def print_means_subsection(doc, subsection_name, arr, arrname, means, fpr):
             print_means(
                 agn, arr[0], arr[-1], means, f"{arrname}_1", f"{arrname}_n", means_names, fpr)
 
-def print_means(agn, val1, val2, results, name1, name2, result_names, fpr):
-    for print_fun, res, name in zip([print_mean, print_gmean, print_hmean], results, result_names):
+def print_means(agn, val1, val2, results, name1, name2, result_name, fpr):
+    """Prints arithmetic, geometric and harmonic means for result_name, with provided values"""
+    for print_fun, res, name in zip([print_mean, print_gmean, print_hmean], results, result_name):
         print_fun(agn, val1, val2, res, name1, name2, name, fpr)
 
 def print_mean(agn, val1, val2, result, name1, name2, result_name, fpr):
