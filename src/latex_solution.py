@@ -3,18 +3,24 @@ from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, Lo
 import numpy as np
 import matplotlib
 from approx_fun import (function_form, id_, inv,
-    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow, ApproxFunResult)
+    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow, ApproxFunResult, FitArgsResult)
 from matplotlib_solution import plot
 
-def latex_solution(
-    data, approx_fun_result: ApproxFunResult,
-    args, args_mapped,
-    mapped_data
-):
+def latex_solution(data, approx_fun_result: ApproxFunResult, fit_args_result: FitArgsResult):
     """
     data = [[xs], [ys]]
     xs, ys = [Num]
     """
+    fpr = '3.3f'# floating precision
+
+    geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
+    doc = Document(geometry_options=geometry_options)
+    print_data_table(doc, 'x', 'y', data[0], data[1])
+    print_find_fun(doc, data, approx_fun_result, fpr)
+    print_fit_args(doc, data, approx_fun_result, fit_args_result, fpr)
+    doc.generate_pdf('full', clean_tex=False)
+
+def print_find_fun(doc, data, approx_fun_result, fpr):
     epsilon_min_idx = np.argmin(approx_fun_result.errors)
     x_means = approx_fun_result.x_means
     y_star  = approx_fun_result.y_star
@@ -22,14 +28,7 @@ def latex_solution(
     epsilon = approx_fun_result.errors
 
     x, y = data
-    f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
-
-    fpr = '3.3f'# floating precision
-
-    geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
-    doc = Document(geometry_options=geometry_options)
-    print_data_table(doc, 'x', 'y', x, y)
-
+    _, _, _, _, _, f_str = function_form[epsilon_min_idx]
     with doc.create(Section('Finding function form')):
         print_means_subsection(doc, 'Mean values of x', x, 'x', x_means, fpr)
 
@@ -59,6 +58,19 @@ def latex_solution(
                 agn.append(f"""\\Rightarrow \\\\
                     y \\approx {f_str}""")
 
+def print_fit_args(doc, data, approx_fun_result: ApproxFunResult, fit_args_result: FitArgsResult, fpr):
+    args = fit_args_result.args
+    args_mapped = fit_args_result.args_mapped
+    mapped_data = fit_args_result.mapped_data
+
+    epsilon_min_idx = np.argmin(approx_fun_result.errors)
+    x_means = approx_fun_result.x_means
+    y_star  = approx_fun_result.y_star
+    y_means = approx_fun_result.y_means
+
+    f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
+    x, y = data
+    
     with doc.create(Section('Fitting arguments')):
         qs, zs = mapped_data
         with doc.create(Subsection('Transformation of coordinates from xOy to qOz')):
@@ -102,8 +114,6 @@ def latex_solution(
                 matplotlib.rc('font', **font)
                 plot(data, (x_, y_), np.array([x_means, y_star]), y_means, f_str, args)
                 plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
-
-    doc.generate_pdf('full', clean_tex=False)
 
 def print_data_table(doc, name1, name2, arr1, arr2):
     with doc.create(LongTable("l l l")) as data_table:

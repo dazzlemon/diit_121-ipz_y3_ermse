@@ -1,5 +1,7 @@
 """TODO: DOCTSTRING"""
 from dataclasses import dataclass
+from numbers import Number
+from typing import Tuple
 import numpy as np
 from scipy.stats import gmean, hmean
 
@@ -34,6 +36,13 @@ class ApproxFunResult:
     y_star:  np.array
     y_means: np.array
     errors:  np.array
+
+@dataclass
+class FitArgsResult:
+    """Represents return from fit_args"""
+    args:        Tuple[Number,   Number]
+    args_mapped: Tuple[np.array, np.array]
+    mapped_data: Tuple[np.array, np.array]
 
 def means(arr):
     """Returns array of arithmetic, geometric and harmonic means for argument array"""
@@ -90,4 +99,4 @@ def fit_args(xs_arr, ys_arr, function_form_n):
     arg1 = inverse_fun(a_fun, mapped_arg2)
     arg2 = inverse_fun(b_fun, mapped_arg1)
 
-    return arg1, arg2, mapped_arg2, mapped_arg1, phi_xs, psi_ys
+    return FitArgsResult((arg1, arg2), (mapped_arg2, mapped_arg1), (phi_xs, psi_ys))
