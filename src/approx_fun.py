@@ -1,4 +1,5 @@
 """TODO: DOCTSTRING"""
+from dataclasses import dataclass
 import numpy as np
 from scipy.stats import gmean, hmean
 
@@ -26,6 +27,14 @@ function_form = [
     (fun_frac2      ,        inv,             inv,      id_,      id_, 'x / (a + b * x)'),
 ]
 
+@dataclass
+class ApproxFunResult:
+    """Represents return from approx_fun"""
+    x_means: np.array
+    y_star:  np.array
+    y_means: np.array
+    errors:  np.array
+
 def means(arr):
     """Returns array of arithmetic, geometric and harmonic means for argument array"""
     return np.array([
@@ -46,7 +55,7 @@ def approx_fun(xs_arr, ys_arr):
         np.take(y_star,  [0, 0, 0, 1, 1, 2, 2]) -
         np.take(y_means, [0, 1, 2, 0, 1, 0, 2])
     )
-    return (x_means, y_star, y_means, epsilon)
+    return ApproxFunResult(x_means, y_star, y_means, epsilon)
 
 def inverse_fun(fun, val):
     """fun(x) = val, returns x, fun = np.log | np.log10 | id_"""

@@ -1,15 +1,13 @@
 """TODO: DOCSTRING"""
 from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, LongTable
-from approx_fun import (function_form, id_, inv,
-    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow)
 import numpy as np
-from matplotlib_solution import plot
 import matplotlib
+from approx_fun import (function_form, id_, inv,
+    fun_exp, fun_frac, fun_frac2, fun_hyperbole, fun_linear, fun_log, fun_pow, ApproxFunResult)
+from matplotlib_solution import plot
 
 def latex_solution(
-    data,
-    x_means, y_star, y_means,
-    epsilon, epsilon_min_idx,
+    data, approx_fun_result: ApproxFunResult,
     args, args_mapped,
     mapped_data
 ):
@@ -17,6 +15,12 @@ def latex_solution(
     data = [[xs], [ys]]
     xs, ys = [Num]
     """
+    epsilon_min_idx = np.argmin(approx_fun_result.errors)
+    x_means = approx_fun_result.x_means
+    y_star  = approx_fun_result.y_star
+    y_means = approx_fun_result.y_means
+    epsilon = approx_fun_result.errors
+
     x, y = data
     f_, phi, psi, a_fun, b_fun, f_str = function_form[epsilon_min_idx]
 
