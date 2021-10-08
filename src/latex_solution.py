@@ -21,26 +21,23 @@ def latex_solution(data, approx_fun_result: ApproxFunResult, fit_args_result: Fi
     doc.generate_pdf('full', clean_tex=False)
 
 def print_find_fun(doc, data, approx_fun_result, fpr):
-    epsilon_min_idx = np.argmin(approx_fun_result.errors)
-    x_means = approx_fun_result.x_means
-    y_star  = approx_fun_result.y_star
-    y_means = approx_fun_result.y_means
-    epsilon = approx_fun_result.errors
-
-    x, y = data
-    _, _, _, _, _, f_str = function_form[epsilon_min_idx]
+    """Prints step by step solution to find best function that fits given data"""
+    errors_argmin = np.argmin(approx_fun_result.errors)
+    f_str = function_form[errors_argmin][5]
     with doc.create(Section('Finding function form')):
-        print_means_subsection(doc, 'Mean values of x', x, 'x', x_means, fpr)
+        print_means_subsection(
+            doc, 'Mean values of x', data[0], 'x', approx_fun_result.x_means, fpr)
 
         with doc.create(Subsection('Interpolated y values for mean values of x')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
                 for i, name in enumerate(['arif', 'geom', 'garm']):
                     agn.append(f"""y_{i + 1}^*
                         = f(x_{{{name}}})
-                        = f({x_means[i]:{fpr}})
-                        = {y_star[i]:{fpr}} \\\\""")
+                        = f({approx_fun_result.x_means[i]:{fpr}})
+                        = {approx_fun_result.y_star[i]:{fpr}} \\\\""")
 
-        print_means_subsection(doc, 'Mean values of y', y, 'y', y_means, fpr)
+        print_means_subsection(
+            doc, 'Mean values of y', data[1], 'y', approx_fun_result.y_means, fpr)
 
         with doc.create(Subsection('Choosing function form according to epsilon error')):
             with doc.create(Alignat(numbering=False, escape=False)) as agn:
@@ -50,11 +47,12 @@ def print_find_fun(doc, data, approx_fun_result, fpr):
                 for i, y_star_i, y_mean_i in zip(range(7), y_star_order, y_mean_order):
                     print_epsilon(
                         agn, i + 1, f"y_{y_star_i + 1}^*", f"y_{{{mean_names[y_mean_i]}}}",
-                        y_star[y_star_i], y_means[y_mean_i], epsilon[i], fpr)
+                        approx_fun_result.y_star[y_star_i],
+                        approx_fun_result.y_means[y_mean_i], approx_fun_result.errors[i], fpr)
                 agn.append(f"""\\Rightarrow \\\\
                     \\varepsilon_{{min}}
-                    = \\varepsilon_{epsilon_min_idx + 1}
-                    = {epsilon[epsilon_min_idx]:{fpr}} \\\\""")
+                    = \\varepsilon_{errors_argmin + 1}
+                    = {approx_fun_result.errors[errors_argmin]:{fpr}} \\\\""")
                 agn.append(f"""\\Rightarrow \\\\
                     y \\approx {f_str}""")
 
