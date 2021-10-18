@@ -1,13 +1,8 @@
 "TODO: DOCSTRING"
 
 import numpy as np
+from scipy import stats
 from more_itertools import pairwise
-
-# variant 11
-data = [
-    180, 155, 149, 176, 181, 146, 105, 191, 163, 116, 113, 182, 149, 195, 147,
-    146, 113, 185, 155, 149, 180, 131, 184, 198, 119, 122, 160, 153, 109, 158,
-]
 
 def np_map(fun, arr):
     """TODO: DOCSTRING"""
@@ -28,7 +23,26 @@ def group(datalist, amount_of_intervals):
 
     return np.array_split(dlist, boundaries_idx), interval_boundaries
 
-grouped, boundaries = group(data, 5)
-for i, b in zip(grouped, pairwise(boundaries)):
-    print(f"[{b[0]};{b[1]}]", f"{len(i):2d}", i)
-# print(boundaries)
+
+
+# def eval_distribution():
+
+
+
+def main():
+    """MAIN"""
+    # variant 11
+    data = [
+        180, 155, 149, 176, 181, 146, 105, 191, 163, 116, 113, 182, 149, 195, 147,
+        146, 113, 185, 155, 149, 180, 131, 184, 198, 119, 122, 160, 153, 109, 158,
+    ]
+
+    grouped, boundaries = group(data, 5)
+    res = stats.cumfreq(sorted(data), numbins=5, defaultreallimits=(min(data), max(data)))
+
+    print("range         size", "cumfreq", "elems")
+    for i, c, bounds in zip(grouped, res.cumcount, pairwise(boundaries)):
+        print(f"[{bounds[0]};{bounds[1]}]", f"{len(i)}  ", f"{c:.0f}          ", i)
+
+if __name__ == "__main__":
+    main()
