@@ -1,8 +1,9 @@
 "TODO: DOCSTRING"
 
-import numpy as np
-from scipy import stats
+import numpy  as np
+from scipy          import stats
 from more_itertools import pairwise
+from tabulate       import tabulate
 
 def np_map(fun, arr):
     """TODO: DOCSTRING"""
@@ -24,11 +25,6 @@ def group(datalist, amount_of_intervals):
     return np.array_split(dlist, boundaries_idx), interval_boundaries
 
 
-
-# def eval_distribution():
-
-
-
 def main():
     """MAIN"""
     # variant 11
@@ -40,9 +36,14 @@ def main():
     grouped, boundaries = group(data, 5)
     res = stats.cumfreq(sorted(data), numbins=5, defaultreallimits=(min(data), max(data)))
 
-    print("range         size", "cumfreq", "elems")
-    for i, c, bounds in zip(grouped, res.cumcount, pairwise(boundaries)):
-        print(f"[{bounds[0]};{bounds[1]}]", f"{len(i)}  ", f"{c:.0f}          ", i)
+
+    dict_ = {
+        'Range'  : pairwise(boundaries),
+        'Size'   : map(len, grouped),
+        'CumFreq': res.cumcount,
+        'Elems'  : grouped
+    }
+    print(tabulate(dict_, headers='keys', tablefmt='psql'))
 
 if __name__ == "__main__":
     main()
