@@ -1,6 +1,7 @@
 "TODO: DOCSTRING"
 
 import numpy as np
+from more_itertools import pairwise
 
 # variant 11
 data = [
@@ -23,11 +24,11 @@ def group(datalist, amount_of_intervals):
 
     interval_boundaries = np.arange(amount_of_intervals + 1) * interval_width + dmin
 
-    boundaries_idx = np_map(lambda i: np.argmax(dlist >= i), interval_boundaries)[1:]
+    boundaries_idx = np_map(lambda i: np.argmax(dlist >= i), interval_boundaries[:-1])[1:]
 
     return np.array_split(dlist, boundaries_idx), interval_boundaries
 
 grouped, boundaries = group(data, 5)
-for i in grouped:
-    print(len(i), i)
-print(boundaries)
+for i, b in zip(grouped, pairwise(boundaries)):
+    print(f"[{b[0]};{b[1]}]", f"{len(i):2d}", i)
+# print(boundaries)
