@@ -77,13 +77,21 @@ def main():
         'Elems'      : grouped,
     }
     print(tabulate(dict_, headers='keys', tablefmt='psql'))
-    print(sample_mean(grouped, bin_edges, hist))
+    print('sample mean = ', sample_mean(grouped, bin_edges, hist))
+    print('variance = ', np.var(data))
 
-    # freq_poly(bin_edges, hist)
-    cumfreq_plot(bin_edges, data)
-    # pdf_plot(bin_edges, hist / width)
-
+    plt.subplot(2, 2, 1)
+    freq_poly(bin_edges, hist)
     plt.legend(loc='best')
+    
+    plt.subplot(2, 2, 2)
+    cumfreq_plot(bin_edges, data)
+    plt.legend(loc='best')
+
+    plt.subplot(2, 2, 3)
+    pdf_plot(bin_edges, hist / width)
+    plt.legend(loc='best')
+
     plt.show()
 
 if __name__ == "__main__":
