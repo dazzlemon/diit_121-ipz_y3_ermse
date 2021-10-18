@@ -1,6 +1,7 @@
 "TODO: DOCSTRING"
 
-import numpy  as np
+import numpy             as np
+import matplotlib.pyplot as plt
 from scipy          import stats
 from more_itertools import pairwise
 from tabulate       import tabulate
@@ -9,21 +10,19 @@ def np_map(fun, arr):
     """TODO: DOCSTRING"""
     return np.array(list(map(fun , arr)))
 
-def group(datalist, amount_of_intervals):
+def group(data, bin_edges):
     """TODO: DOCSTRING"""
-    dlist = sorted(datalist)
+    dlist = sorted(data)
+    boundaries_idx = np_map(lambda i: np.argmax(dlist >= i), bin_edges[:-1])[1:]
+    return np.array_split(dlist, boundaries_idx)
 
-    dmin = dlist[0]
-    dmax = dlist[-1]
+def pdf():
+    """Probability density function"""
+    freq_density = freq / width
 
-    interval_width = (dmax - dmin) / amount_of_intervals# h
-
-    interval_boundaries = np.arange(amount_of_intervals + 1) * interval_width + dmin
-
-    boundaries_idx = np_map(lambda i: np.argmax(dlist >= i), interval_boundaries[:-1])[1:]
-
-    return np.array_split(dlist, boundaries_idx), interval_boundaries
-
+def freq_poly(bin_edges, freq):
+    bin_means = np_map(lambda x: (x[0] + x[1]) / 2, pairwise(bin_edges))
+    plt.plot(bin_means, freq)
 
 def main():
     """MAIN"""
@@ -33,17 +32,25 @@ def main():
         146, 113, 185, 155, 149, 180, 131, 184, 198, 119, 122, 160, 153, 109, 158,
     ]
 
-    grouped, boundaries = group(data, 5)
-    res = stats.cumfreq(sorted(data), numbins=5, defaultreallimits=(min(data), max(data)))
-
+    amount_bins = 5
+    width = len(data) / amount_bins
+    range_ = (min(data), max(data))
+    
+    hist, bin_edges = np.histogram(data, amount_bins)
+    grouped = group(data, bin_edges)
+    res = stats.cumfreq(sorted(data), numbins=amount_bins, defaultreallimits=range_)
 
     dict_ = {
-        'Range'  : pairwise(boundaries),
-        'Size'   : map(len, grouped),
-        'CumFreq': res.cumcount,
-        'Elems'  : grouped
+        'Range'      : pairwise(bin_edges),
+        'Freq'       : hist,
+        'CumFreq'    : res.cumcount,
+        'FreqDensity': hist / width,
+        'Elems'      : grouped,
     }
     print(tabulate(dict_, headers='keys', tablefmt='psql'))
+    
+    freq_poly(bin_edges, hist)
+    plt.show()
 
 if __name__ == "__main__":
     main()
