@@ -8,6 +8,10 @@ data = [
     146, 113, 185, 155, 149, 180, 131, 184, 198, 119, 122, 160, 153, 109, 158,
 ]
 
+def np_map(fun, arr):
+    """TODO: DOCSTRING"""
+    return np.array(list(map(fun , arr)))
+
 def group(datalist, amount_of_intervals):
     """TODO: DOCSTRING"""
     dlist = sorted(datalist)
@@ -19,11 +23,11 @@ def group(datalist, amount_of_intervals):
 
     interval_boundaries = np.arange(amount_of_intervals + 1) * interval_width + dmin
 
-    boundaries_idx
+    boundaries_idx = np_map(lambda i: np.argmax(dlist >= i), interval_boundaries)[1:]
 
-    return np.array_split(dlist, amount_of_intervals), interval_boundaries
+    return np.array_split(dlist, boundaries_idx), interval_boundaries
 
 grouped, boundaries = group(data, 5)
 for i in grouped:
-    print(i)
+    print(len(i), i)
 print(boundaries)
