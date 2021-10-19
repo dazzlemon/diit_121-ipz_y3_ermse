@@ -6,6 +6,7 @@ from more_itertools import pairwise
 from tabulate       import tabulate
 from plots          import plot
 from util           import edges_means, np_map
+from latex          import latex_solution
 
 def group(data, bin_edges):
     """TODO: DOCSTRING"""
@@ -55,8 +56,9 @@ def main():
     grouped = group(data, bin_edges)
     res = stats.cumfreq(sorted(data), numbins=amount_bins, defaultreallimits=range_)
 
-    print_(data, hist, bin_edges, width, res, grouped)
-    plot(data, hist, bin_edges, width)
+    # print_(data, hist, bin_edges, width, res, grouped)
+    # plot(data, hist, bin_edges, width)
+    latex_solution(data)
 
 if __name__ == "__main__":
     main()
