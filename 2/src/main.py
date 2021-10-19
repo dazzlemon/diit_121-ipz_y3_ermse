@@ -49,8 +49,9 @@ def main():
     ]
     amount_bins = 6#5
 
-    width = len(data) / amount_bins
+    # width = len(data) / amount_bins
     range_ = (min(data), max(data))
+    width = int((range_[1] - range_[0]) / amount_bins)
 
     hist, bin_edges = np.histogram(data, amount_bins)
     grouped = group(data, bin_edges)
@@ -58,7 +59,7 @@ def main():
 
     # print_(data, hist, bin_edges, width, res, grouped)
     # plot(data, hist, bin_edges, width)
-    latex_solution(data)
+    latex_solution(data, amount_bins, width, bin_edges)
 
 if __name__ == "__main__":
     main()
