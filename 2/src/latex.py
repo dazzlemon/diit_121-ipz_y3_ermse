@@ -1,20 +1,10 @@
-from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, LongTable
+from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, LongTable, Command, Table, Package
 from more_itertools import ichunked, pairwise
+import pandas as pd
 
 def print_dict_table(doc, dict_):
-    headers = list(dict_.keys())
-
-    with doc.create(LongTable("l " * len(headers))) as table:
-        table.add_hline()
-        table.add_row(headers)
-        table.add_hline()
-        table.end_table_header()
-
-        columns = map(lambda col: dict_[col], headers)
-
-        for row in zip(*columns):
-            table.add_row(row)
-        table.add_hline()
+    df = pd.DataFrame(dict_)
+    doc.append(NoEscape(df.to_latex(index=False, escape=False)))
 
 def print_table(doc, data, caption, row_size=10):
     if len(data) < row_size:
@@ -32,6 +22,7 @@ def print_table(doc, data, caption, row_size=10):
 def latex_solution(data, amount_bins, width, bin_edges, freq):
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
+    doc.packages.append(Package('booktabs'))# for print_dict_table
     
     print_table(doc, data, 'input data')
     print_table(doc, sorted(data), 'variational series')
