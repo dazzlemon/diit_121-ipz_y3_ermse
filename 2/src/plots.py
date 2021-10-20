@@ -36,5 +36,3 @@ def plot(data, hist, bin_edges, width):
     plt.subplot(2, 2, 3)
     pdf_plot(bin_edges, hist / width)
     plt.legend(loc='best')
-
-    plt.show()

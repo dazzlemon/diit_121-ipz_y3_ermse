@@ -1,10 +1,14 @@
 from pylatex import Document, Section, Subsection, Alignat, Figure, NoEscape, LongTable, Command, Table, Package
 from more_itertools import ichunked, pairwise
 import pandas as pd
+import numpy as np
+import matplotlib
+from plots import plot
 
 def print_dict_table(doc, dict_):
     df = pd.DataFrame(dict_)
-    doc.append(NoEscape(df.to_latex(index=False, escape=False)))
+    mcf = '|'.join('c' * len(dict_.keys()))
+    doc.append(NoEscape(df.to_latex(index=False, escape=False, column_format=mcf)))
 
 def print_table(doc, data, caption, row_size=10):
     if len(data) < row_size:
@@ -19,7 +23,15 @@ def print_table(doc, data, caption, row_size=10):
                 i.append('')
             table.add_row(i)
 
-def latex_solution(data, amount_bins, width, bin_edges, freq):
+def float_to_str(precision):
+    def fts(x):
+        stripped = f"{x:{precision}}".rstrip('0')
+        if stripped[-1] == '.':
+            stripped += '0'
+        return stripped
+    return fts
+
+def latex_solution(data, amount_bins, width, bin_edges, freq, cumfreq):
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
     doc.packages.append(Package('booktabs'))# for print_dict_table
@@ -42,8 +54,17 @@ def latex_solution(data, amount_bins, width, bin_edges, freq):
     print_table(doc, bin_edges, 'bin edges')
 
     print_dict_table(doc, {
-        'range'     : pairwise(bin_edges),
-        'frequency' : freq,
+        'range'                        : pairwise(bin_edges),
+        'frequency'                    : freq,
+        'frequency density'            : map(float_to_str('.6f'), freq    / len(data)),
+        'cumulative frequency'         : cumfreq.astype(np.int32),
+        'cumulative frequency density' : map(float_to_str('.6f'), cumfreq / len(data)),
     })
+
+    with doc.create(Figure(position='htbp')) as plot_:
+        font = {'size'   : 4}
+        matplotlib.rc('font', **font)
+        plot(data, freq, bin_edges, width)
+        plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)

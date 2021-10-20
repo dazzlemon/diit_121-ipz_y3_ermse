@@ -59,7 +59,9 @@ def main():
 
     # print_(data, hist, bin_edges, width, res, grouped)
     # plot(data, hist, bin_edges, width)
-    latex_solution(data, amount_bins, width, bin_edges, hist)
+    # plt.show()
+
+    latex_solution(data, amount_bins, width, bin_edges, hist, res.cumcount)
 
 if __name__ == "__main__":
     main()
