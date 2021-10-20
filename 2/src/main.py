@@ -61,7 +61,7 @@ def main():
     # plot(data, hist, bin_edges, width)
     # plt.show()
 
-    latex_solution(data, amount_bins, width, bin_edges, hist, res.cumcount)
+    latex_solution(data, amount_bins, width, bin_edges, hist, res.cumcount, sample_mean(grouped, bin_edges, hist), np.var(data))
 
 if __name__ == "__main__":
     main()

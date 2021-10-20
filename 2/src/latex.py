@@ -31,10 +31,11 @@ def float_to_str(precision):
         return stripped
     return fts
 
-def latex_solution(data, amount_bins, width, bin_edges, freq, cumfreq):
+def latex_solution(data, amount_bins, width, bin_edges, freq, cumfreq, smean, variance):
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
     doc.packages.append(Package('booktabs'))# for print_dict_table
+    doc.packages.append(Package('float'))# correct position for plot
     
     print_table(doc, data, 'input data')
     print_table(doc, sorted(data), 'variational series')
@@ -61,10 +62,14 @@ def latex_solution(data, amount_bins, width, bin_edges, freq, cumfreq):
         'cumulative frequency density' : map(float_to_str('.6f'), cumfreq / len(data)),
     })
 
-    with doc.create(Figure(position='htbp')) as plot_:
+    with doc.create(Figure(position='H')) as plot_:
         font = {'size'   : 4}
         matplotlib.rc('font', **font)
         plot(data, freq, bin_edges, width)
         plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
+
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        agn.append(f'\\overline {{ x_{{b}} }} = {smean:.2f}')# sample mean
+        agn.append(f';~ D = {variance:.2f}')# variance
 
     doc.generate_pdf('full', clean_tex=False)
