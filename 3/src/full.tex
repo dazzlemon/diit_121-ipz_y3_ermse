@@ -17,66 +17,77 @@
 \normalsize%
 \begin{tabular}{c|c}
 \toprule
-       range &  freq \\
+         range &  freq \\
 \midrule
-  (5.4, 6.4) &     3 \\
-  (6.4, 7.4) &     1 \\
-  (7.4, 8.4) &     5 \\
-  (8.4, 9.4) &     9 \\
- (9.4, 10.4) &     9 \\
-(10.4, 11.4) &     3 \\
+(105.0, 123.6) &     7 \\
+(123.6, 142.2) &     1 \\
+(142.2, 160.8) &    11 \\
+(160.8, 179.4) &     2 \\
+(179.4, 198.0) &     9 \\
 \bottomrule
 \end{tabular}
 %
 \begin{alignat*}{2}%
-\overline {{ x_{{b}} }} = 8.87%
-\\ \mu_2 = D = 1.90%
+\overline {{ x_{{b}} }} = 154.60%
+\\ \mu_2 = D = 753.02%
 \end{alignat*}%
 \begin{alignat*}{2}%
 \\ \mu_3
             = \frac 1 n \sum\limits_{j = 1}^L {n_j (x_j - \overline {{ x_{{b}} }})^3}
-            = \frac 1 { 30 } * (-55.87)
-            = -1.86
+            = \frac 1 { 30 } * (-104387.66)
+            = -3479.59
         %
 \end{alignat*}%
 \begin{alignat*}{2}%
 \\ \mu_4
             = \frac 1 n \sum\limits_{j = 1}^L {n_j (x_j - \overline {{ x_{{b}} }})^4}
-            = \frac 1 { 30 } * (313.99)
-            = 10.47
+            = \frac 1 { 30 } * (30971015.55)
+            = 1032367.19
         %
 \end{alignat*}%
 \begin{alignat*}{2}%
 \beta_1^2
             = \frac {\mu_2^3} {\mu_3^2}
-            = \frac {6.86} {3.47}
-            = 0.51
+            = \frac {426991798.44} {12107538.22}
+            = 0.03
         %
 \end{alignat*}%
 \begin{alignat*}{2}%
 \beta_2
             = \frac {\mu_4} {\mu_2^2}
-            = \frac {10.47} {3.61}
-            = 2.90
+            = \frac {1032367.19} {567039.12}
+            = 1.82
         %
 \end{alignat*}%
 
 
 \begin{figure}[H]%
 \centering%
-\includegraphics[width=1\textwidth]{/tmp/pylatex-tmp._ofsgzl3/ad7f2261-7d98-419a-8309-d9ac6140a1a3.pdf}%
+\includegraphics[width=1\textwidth]{/tmp/pylatex-tmp.5nq6ge_d/0bb741da-e8f4-472c-8358-39df817c0a5e.pdf}%
 \end{figure}
 
 %
 \begin{alignat*}{2}%
-\alpha = \overline {{ x_{{b}} }} = 8.87%
+\alpha = \overline {{ x_{{b}} }} = 154.6%
 \\ \lambda
             = \sigma
             = \sqrt D
-            = \sqrt {1.9}
-            = 1.38
+            = \sqrt {753.02}
+            = 27.44
         %
-\\ W_n(x; ~ \alpha, ~ \lambda) = \frac 1 {{\lambda \sqrt {{2 \pi}} }}
-            e^{{ - \frac {{(x - \alpha)^2}} {{2 \lambda^2}} }}%
+\\ W_n(x; ~ \alpha, ~ \lambda)
+            = \frac 1 {{\lambda \sqrt {{2 \pi}} }}
+                e^{{ - \frac {{(x - \alpha)^2}} {{2 \lambda^2}} }}%
+\\ W_n(x; ~154.60, ~ 27.44)
+            = \frac 1 { 27.44 \sqrt {2 \pi} }
+                e^{ - \frac {(x - 154.60)^2} {2 * 27.44^2} }%
 \end{alignat*}%
+
+
+\begin{figure}[H]%
+\centering%
+\includegraphics[width=1\textwidth]{/tmp/pylatex-tmp.5nq6ge_d/3e541cec-0254-4eb2-970f-44b18cd69a41.pdf}%
+\end{figure}
+
+%
 \end{document}

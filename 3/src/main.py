@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from bunch import Bunch
-from math import sqrt
+from math import sqrt, pi
 
 def print_dict_table(doc, dict_):
     """dictionary as latex table to pylatex.Document"""
@@ -54,10 +54,14 @@ def print_frac(doc, name, numerator_name, denominator_name,
 
 def latex():
     """Lr3"""
-    freq = [3, 1, 5, 9, 9, 3]
-    bin_edges = np.linspace(5.4, 11.4, 7)
-    sample_mean = 8.87
-    var = 1.9
+    # freq = [3, 1, 5, 9, 9, 3]
+    # bin_edges = np.linspace(5.4, 11.4, 7)
+    # sample_mean = 8.87
+    # var = 1.9
+    freq = [7, 1, 11, 2, 9]
+    bin_edges = np.linspace(105, 198, 6)
+    sample_mean = 154.6
+    var = 753.02
 
     sample_mean_sym = '\\overline {{ x_{{b}} }}'
 
@@ -120,8 +124,29 @@ def latex():
             = {sqrt(var):.2f}
         """)
 
-        agn.append("""\\\\ W_n(x; ~ \\alpha, ~ \\lambda) = \\frac 1 {{\\lambda \\sqrt {{2 \\pi}} }}
-            e^{{ - \\frac {{(x - \\alpha)^2}} {{2 \\lambda^2}} }}""")
+        offset = f'{sample_mean:.2f}'
+        deviation = f'{sqrt(var):.2f}'
+
+        agn.append("""\\\\ W_n(x; ~ \\alpha, ~ \\lambda)
+            = \\frac 1 {{\\lambda \\sqrt {{2 \\pi}} }}
+                e^{{ - \\frac {{(x - \\alpha)^2}} {{2 \\lambda^2}} }}""")
+
+        agn.append(f"""\\\\ W_n(x; ~{offset}, ~ {deviation})
+            = \\frac 1 {{ {deviation} \\sqrt {{2 \\pi}} }}
+                e^{{ - \\frac {{(x - {offset})^2}} {{2 * {deviation}^2}} }}""")
+
+    with doc.create(Figure(position='H')) as plot_:
+        font = {'size' : 4}
+        matplotlib.rc('font', **font)
+        plt.clf()
+
+        x = np.linspace(bin_edges[0], bin_edges[-1], 100)
+        def f(x):
+            return 1 / (sqrt(2 * pi * var)) \
+                / np.exp((x - sample_mean) ** 2 / 2 / var)
+        plt.plot(x, f(x))
+
+        plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)
 latex()
