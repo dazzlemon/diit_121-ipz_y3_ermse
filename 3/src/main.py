@@ -13,21 +13,40 @@ def print_dict_table(doc, dict_):
 
 
 def print_central_moment(doc, grouped, nth):
-    """prints nth central moment to pylatex.Document"""
-    sum_ = np.sum(grouped.freq * (grouped.ranges_m - grouped.sample_mean)**nth)
-    res = 1 / grouped.sample_size * sum_
+    """
+    prints nth central moment to pylatex.Document
+    """
+    sum_, res = central_moment(grouped, nth)
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
-        agn.append(f"""\\\\ \\hat{{\\mu}}_3
+        # agn.append(f"""\\\\ \\hat{{\\mu}}_{nth}
+        agn.append(f"""\\\\ \\mu_{nth}
             = \\frac 1 n \\sum\\limits_{{j = 1}}^L {{n_j (x_j - {grouped.sample_mean_sym})^{nth}}}
             = \\frac 1 {{ {grouped.sample_size} }} * ({sum_:.2f})
             = {res:.2f}
         """)
 
 
+def central_moment(grouped, nth):
+    """returns nth central_moment and sum needed to calculate it"""
+    sum_ = np.sum(grouped.freq * (grouped.ranges_m - grouped.sample_mean)**nth)
+    res = 1 / grouped.sample_size * sum_
+    return sum_, res
+
+
 def np_map(func, arr):
     """same as map but returns np.array"""
     return np.array(list(map(func, arr)))
+
+
+def print_frac(doc, name, numerator_name, denominator_name,
+    numerator, denominator, result):
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        agn.append(f"""{name}
+            = \\frac {{{numerator_name}}} {{{denominator_name}}}
+            = \\frac {{{numerator:.2f}}} {{{denominator:.2f}}}
+            = {result:.2f}
+        """)
 
 
 def latex():
@@ -62,13 +81,21 @@ def latex():
         'freq'  : freq
     })
 
-
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
         agn.append(f'{sample_mean_sym} = {sample_mean:.2f}')
-        agn.append(f';~ D = {var:.2f}')
+        agn.append(f'\\\\ \\mu_2 = D = {var:.2f}')
 
-    for i in [3, 4]:
-        print_central_moment(doc, Bunch(grouped), i)
+    _, mu_3 = central_moment(Bunch(grouped), 3)
+    _, mu_4 = central_moment(Bunch(grouped), 4)
+
+    print_central_moment(doc, Bunch(grouped), 3)
+    print_central_moment(doc, Bunch(grouped), 4)
+
+    assym_coef = mu_3 ** 2 / var ** 3
+    excess_coef = mu_4 / var ** 2
+
+    print_frac(doc, '\\beta_1^2', '\\mu_2^3', '\\mu_3^2', var**3, mu_3**2, assym_coef)
+    print_frac(doc, '\\beta_2', '\\mu_4', '\\mu_2^2', mu_4, var**2, excess_coef)
 
     doc.generate_pdf('full', clean_tex=False)
 latex()
