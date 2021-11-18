@@ -1,8 +1,10 @@
 """MAIN"""
-from pylatex import (Document, NoEscape, Package, Alignat)
+from pylatex import (Document, NoEscape, Package, Alignat, Figure)
 from more_itertools import pairwise
 import pandas as pd
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 from bunch import Bunch
 
 def print_dict_table(doc, dict_):
@@ -76,6 +78,7 @@ def latex():
     geometry_options = {"tmargin": "1cm", "lmargin": "1cm"}
     doc = Document(geometry_options=geometry_options)
     doc.packages.append(Package('booktabs'))# for print_dict_table
+    doc.packages.append(Package('float'))# correct position for plot
     print_dict_table(doc, {
         'range' : ranges,
         'freq'  : freq
@@ -96,6 +99,16 @@ def latex():
 
     print_frac(doc, '\\beta_1^2', '\\mu_2^3', '\\mu_3^2', var**3, mu_3**2, assym_coef)
     print_frac(doc, '\\beta_2', '\\mu_4', '\\mu_2^2', mu_4, var**2, excess_coef)
+
+    with doc.create(Figure(position='H')) as plot_:
+        font = {'size': 4}
+        matplotlib.rc('font', **font)
+
+        for coords, name in zip([(0, 3), (0, 1.8), (4, 9), (assym_coef, excess_coef)], ['N', 'R', 'E', 'Beta']):
+            plt.scatter([coords[0]], [coords[1]], label=f'{name}({coords[0]:.2f}, {coords[1]:.2f})')
+        plt.legend(loc='best')
+
+        plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     doc.generate_pdf('full', clean_tex=False)
 latex()
