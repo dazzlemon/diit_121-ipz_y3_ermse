@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from bunch import Bunch
+from math import sqrt
 
 def print_dict_table(doc, dict_):
     """dictionary as latex table to pylatex.Document"""
@@ -109,6 +110,18 @@ def latex():
         plt.legend(loc='best')
 
         plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
+
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        agn.append(f"""\\alpha = {sample_mean_sym} = {sample_mean}""")
+        agn.append(f"""\\\\ \\lambda
+            = \\sigma
+            = \\sqrt D
+            = \\sqrt {{{var}}}
+            = {sqrt(var):.2f}
+        """)
+
+        agn.append("""\\\\ W_n(x; ~ \\alpha, ~ \\lambda) = \\frac 1 {{\\lambda \\sqrt {{2 \\pi}} }}
+            e^{{ - \\frac {{(x - \\alpha)^2}} {{2 \\lambda^2}} }}""")
 
     doc.generate_pdf('full', clean_tex=False)
 latex()
