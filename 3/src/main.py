@@ -116,7 +116,7 @@ def latex():
         plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
-        agn.append(f"""\\alpha = {sample_mean_sym} = {sample_mean}""")
+        # agn.append(f"""\\alpha = {sample_mean_sym} = {sample_mean}""")
         agn.append(f"""\\\\ \\lambda
             = \\sigma
             = \\sqrt D
@@ -124,16 +124,25 @@ def latex():
             = {sqrt(var):.2f}
         """)
 
-        offset = f'{sample_mean:.2f}'
+        # offset = f'{sample_mean:.2f}'
         deviation = f'{sqrt(var):.2f}'
 
-        agn.append("""\\\\ W_n(x; ~ \\alpha, ~ \\lambda)
-            = \\frac 1 {{\\lambda \\sqrt {{2 \\pi}} }}
-                e^{{ - \\frac {{(x - \\alpha)^2}} {{2 \\lambda^2}} }}""")
+        agn.append("""\\\\ W_R(x; ~ \\alpha, ~ \\lambda)
+            = \\frac 1 \\lambda
+        """)
 
-        agn.append(f"""\\\\ W_n(x; ~{offset}, ~ {deviation})
-            = \\frac 1 {{ {deviation} \\sqrt {{2 \\pi}} }}
-                e^{{ - \\frac {{(x - {offset})^2}} {{2 * {deviation}^2}} }}""")
+        agn.append(f"""\\\\ W_R(x; ~ \\alpha, ~ {sqrt(var):.2f})
+            = \\frac 1 {{{sqrt(var):.2f}}}
+            = {(1 / sqrt(var)):.4f}
+        """)
+
+        # agn.append("""\\\\ W_n(x; ~ \\alpha, ~ \\lambda)
+        #     = \\frac 1 {{\\lambda \\sqrt {{2 \\pi}} }}
+        #         e^{{ - \\frac {{(x - \\alpha)^2}} {{2 \\lambda^2}} }}""")
+
+        # agn.append(f"""\\\\ W_n(x; ~{offset}, ~ {deviation})
+        #     = \\frac 1 {{ {deviation} \\sqrt {{2 \\pi}} }}
+        #         e^{{ - \\frac {{(x - {offset})^2}} {{2 * {deviation}^2}} }}""")
 
     with doc.create(Figure(position='H')) as plot_:
         font = {'size' : 4}
@@ -144,7 +153,8 @@ def latex():
         def f(x):
             return 1 / (sqrt(2 * pi * var)) \
                 / np.exp((x - sample_mean) ** 2 / 2 / var)
-        plt.plot(x, f(x))
+        # plt.plot(x, f(x))
+        plt.plot(x, np_map(lambda x_: 1 / sqrt(var), x))
 
         plot_.add_plot(width=NoEscape(r'1\textwidth'), dpi=10000)
 
