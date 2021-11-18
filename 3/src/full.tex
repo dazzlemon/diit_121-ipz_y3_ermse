@@ -1,0 +1,38 @@
+\documentclass{article}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage{geometry}%
+\geometry{tmargin=1cm,lmargin=1cm}%
+\usepackage{booktabs}%
+\usepackage{amsmath}%
+%
+%
+%
+\begin{document}%
+\normalsize%
+\begin{tabular}{c|c}
+\toprule
+       range &  freq \\
+\midrule
+  (5.4, 6.4) &     3 \\
+  (6.4, 7.4) &     1 \\
+  (7.4, 8.4) &     5 \\
+  (8.4, 9.4) &     9 \\
+ (9.4, 10.4) &     9 \\
+(10.4, 11.4) &     3 \\
+\bottomrule
+\end{tabular}
+%
+\begin{alignat*}{2}%
+\overline {{ x_{{b}} }} = 8.87%
+;~ D = 1.90%
+\\ \hat{\mu}_3
+             = \frac 1 n \sum\limits_{j = 1}^L {n_j (x_j - \overline {{ x_{{b}} }})^3}
+             = \frac 1 { 30 } * (-55.87)
+             = -1.86
+        %
+\end{alignat*}%
+\end{document}
