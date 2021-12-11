@@ -1,5 +1,6 @@
 """Lr4"""
 import pandas as pd
+import numpy as np
 from pylatex import Document, NoEscape, Alignat, Package
 
 def print_dict_table(doc, dict_):
@@ -30,10 +31,18 @@ def latex():
         'Y': data_y,
     })
 
-    with doc.create(Alignat(numbering=False, escape=False)) as agn:
-        agn.append('text')
+    data_x_smean = np.mean(data_x)
+    data_y_smean = np.mean(data_y)
 
-    doc.generate_pdf('full', clean_tex=False)
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        for name, data in zip(['x', 'y'], [data_x_smean, data_y_smean]):
+            agn.append(f"""m_{name}
+                = \\frac 1 n \\sum\\limits_{{ i=1 }}^n {name}_i
+                = {data}
+                \\\\
+            """)
+
+    doc.generate_pdf('full', clean_tex=True)
 
 
 latex()
