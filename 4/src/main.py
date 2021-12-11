@@ -34,11 +34,21 @@ def latex():
     data_x_smean = np.mean(data_x)
     data_y_smean = np.mean(data_y)
 
+    estimator_bias_x = 1 / (len(data_x) - 1) * np.sum((data_x - data_x_smean)**2)
+    estimator_bias_y = 1 / (len(data_y) - 1) * np.sum((data_y - data_y_smean)**2)
+
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
         for name, data in zip(['x', 'y'], [data_x_smean, data_y_smean]):
             agn.append(f"""m_{name}
                 = \\frac 1 n \\sum\\limits_{{ i=1 }}^n {name}_i
                 = {data}
+                \\\\
+            """)
+
+        for name, data in zip(['x', 'y'], [estimator_bias_x, estimator_bias_y]):
+            agn.append(f"""\\widehat S_{name}^2
+                = \\frac 1 {{n - 1}} \\sum\\limits_{{ i =1 }}^n {{ ({name}_i - m)^2 }}
+                = {data:.2f}
                 \\\\
             """)
 
