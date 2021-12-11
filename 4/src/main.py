@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 from pylatex import Document, NoEscape, Alignat, Package
-from scipy.stats import f
+from scipy.stats import f, t
+from math import sqrt
 
 
 def print_dict_table(doc, dict_):
@@ -28,6 +29,7 @@ def latex():
     doc = Document(geometry_options=geometry_options)
     doc.packages.append(Package('booktabs'))# for print_dict_table
     doc.packages.append(Package('float'))# correct position for plot
+    doc.packages.append(Package('amsmath'))
 
     print_dict_table(doc, {
         'X': data_x,
@@ -44,8 +46,11 @@ def latex():
     estimator_bias_y = 1 / (len_y - 1) * np.sum((data_y - data_y_smean)**2)
 
     alpha_ = alpha / 2 * 100
-    fisher_lo = f.pdf(alpha_, len_x - 1, len_y - 1)
-    fisher_hi = 1 / fisher_lo
+    fisher_hi = f.ppf(1 - alpha / 2, len_x - 1, len_y - 1)
+    fisher_lo = 1 / fisher_hi
+
+    student_hi = 1 / t.ppf(alpha / 2, len_x + len_y - 2)
+    student_lo = -student_hi
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
         for name, data in zip(['x', 'y'], [data_x_smean, data_y_smean]):
@@ -92,6 +97,30 @@ def latex():
             agn.append(f'H_0~is~correct,~ m_x = m_y ~for~ \\alpha = {alpha}')
         else:
             agn.append(f'H_1~is~correct,~ m_x \\ne m_y ~for~ \\alpha = {alpha}')
+
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        agn.append(f"""\\\\ \\psi_{{est}}
+            = \\frac {{|m_x - m_y|}}
+                {{ \\sqrt \\frac {{ (n_1 - 1) * \\widehat S_x^2 + (n_2 - 1) * \\widehat S_y^2 }}
+                    {{(n_1 + n_2 - 2)}} }}
+                * \\sqrt \\frac {{n_1 n_2}} {{n_1 + n_2}}
+            \\\\
+            = \\frac {{|{data_x_smean} - {data_y_smean}|}}
+                {{ \\sqrt \\frac {{ {len_x - 1} * {estimator_bias_x:.3f} + {len_y - 1} * {estimator_bias_y:.3f} }}
+                    {{{len_x + len_y - 2}}} }}
+                * \\sqrt \\frac {{ {len_x} * {len_y} }} {{{len_x + len_y}}}
+            = {abs(data_x_smean - data_y_smean)
+                / sqrt(
+                    ( (len_x - 1) * estimator_bias_x + (len_y - 1) * estimator_bias_y ) 
+                    / (len_x + len_y - 2)) 
+                * sqrt(len_x * len_y / (len_x + len_y)):.3f}
+        """)
+
+        agn.append(f"""\\\\ \\psi_{{hi}}
+            = t_{{ {alpha_}\\% }}(n_1 + n_2 - 2)
+            = t_{{ {alpha_}\\% }}({len_x + len_y - 2})
+            = {student_hi:.3f}
+        """)
 
     doc.generate_pdf('full', clean_tex=True)
 
