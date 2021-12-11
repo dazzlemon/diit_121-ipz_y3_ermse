@@ -49,6 +49,11 @@ def latex():
     fisher_hi = f.ppf(1 - alpha / 2, len_x - 1, len_y - 1)
     fisher_lo = 1 / fisher_hi
 
+    student_est = abs(data_x_smean - data_y_smean) \
+        / sqrt(
+            ( (len_x - 1) * estimator_bias_x + (len_y - 1) * estimator_bias_y ) 
+            / (len_x + len_y - 2)) \
+        * sqrt(len_x * len_y / (len_x + len_y))
     student_hi = t.ppf(1 - alpha / 2, len_x + len_y - 2)
     student_lo = -student_hi
 
@@ -94,9 +99,9 @@ def latex():
         """)
 
         if fisher_lo < estimator_bias_x / estimator_bias_y < fisher_hi:
-            agn.append(f'H_0~is~correct,~ m_x = m_y ~for~ \\alpha = {alpha}')
+            agn.append(f'\\sigma_x^2 = \\sigma_y^2 ~for~ \\alpha = {alpha}')
         else:
-            agn.append(f'H_1~is~correct,~ m_x \\ne m_y ~for~ \\alpha = {alpha}')
+            agn.append(f'\\sigam_x^2 \\ne \\sigma_y^2 ~for~ \\alpha = {alpha}')
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
         agn.append(f"""\\\\ \\psi_{{est}}
@@ -109,11 +114,7 @@ def latex():
                 {{ \\sqrt \\frac {{ {len_x - 1} * {estimator_bias_x:.3f} + {len_y - 1} * {estimator_bias_y:.3f} }}
                     {{{len_x + len_y - 2}}} }}
                 * \\sqrt \\frac {{ {len_x} * {len_y} }} {{{len_x + len_y}}}
-            = {abs(data_x_smean - data_y_smean)
-                / sqrt(
-                    ( (len_x - 1) * estimator_bias_x + (len_y - 1) * estimator_bias_y ) 
-                    / (len_x + len_y - 2)) 
-                * sqrt(len_x * len_y / (len_x + len_y)):.3f}
+            = {student_est:.3f}
         """)
 
         agn.append(f"""\\\\ \\psi_{{hi}}
@@ -121,6 +122,22 @@ def latex():
             = t_{{ {alpha_}\\% }}({len_x + len_y - 2})
             = {student_hi:.3f}
         """)
+
+        agn.append(f"""\\\\ \\psi_{{lo}}
+            = - \\psi{{hi}}
+            = {student_lo:.3f}
+        """)
+
+        agn.append(f"""\\\\ {student_lo:.3f}
+            < {student_est:.3f}
+            < {student_hi:.3f}
+            \\\\
+        """)
+
+        if student_lo < student_est < student_hi:
+            agn.append(f'm_x = m_y ~for~ \\alpha = {alpha}')
+        else:
+            agn.append(f'm_x \\ne m_y ~for~ \\alpha = {alpha}')
 
     doc.generate_pdf('full', clean_tex=True)
 
