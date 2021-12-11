@@ -49,7 +49,7 @@ def latex():
     fisher_hi = f.ppf(1 - alpha / 2, len_x - 1, len_y - 1)
     fisher_lo = 1 / fisher_hi
 
-    student_hi = 1 / t.ppf(alpha / 2, len_x + len_y - 2)
+    student_hi = t.ppf(1 - alpha / 2, len_x + len_y - 2)
     student_lo = -student_hi
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
