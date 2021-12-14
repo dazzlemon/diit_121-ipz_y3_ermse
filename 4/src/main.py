@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 from pylatex import Document, NoEscape, Alignat, Package
+from pylatex.basic import NewPage
 from scipy.stats import f, t
 from math import sqrt
 
@@ -41,12 +42,17 @@ def latex():
     doc = Document(geometry_options=geometry_options)
     doc.packages.append(Package('booktabs'))# for print_dict_table
     doc.packages.append(Package('float'))# correct position for plot
-    doc.packages.append(Package('amsmath'))
+
+    with doc.create(Alignat(numbering=False, escape=False)) as agn:
+        agn.append('Author:~Safonov~Danylo~pz1911(931) \\\\Variant:~11 \\\\')
+        agn.append(f'\\alpha = {alpha}')
 
     print_dict_table(doc, {
         'X': data_x,
         'Y': data_y,
     })
+
+    doc.append(NewPage())
 
     len_x = len(data_x)
     len_y = len(data_y)
@@ -104,16 +110,21 @@ def latex():
             \\\\
         """)
 
+        agn.append('\\rule{120pt}{0.4pt} \\\\')
         agn.append(f"""{fisher_lo:.3f}
             < {estimator_bias_x / estimator_bias_y:.3f}
             < {fisher_hi:.3f}
             \\\\
         """)
 
+        agn.append('\\implies \\\\')
+
         if fisher_lo < estimator_bias_x / estimator_bias_y < fisher_hi:
             agn.append(f'\\sigma_x^2 = \\sigma_y^2 ~for~ \\alpha = {alpha}')
         else:
             agn.append(f'\\sigam_x^2 \\ne \\sigma_y^2 ~for~ \\alpha = {alpha}')
+
+    doc.append(NewPage())
 
     with doc.create(Alignat(numbering=False, escape=False)) as agn:
         agn.append(f"""\\\\ \\psi_{{est}}
@@ -136,9 +147,11 @@ def latex():
         """)
 
         agn.append(f"""\\\\ \\psi_{{lo}}
-            = - \\psi{{hi}}
+            = - \\psi_{{hi}}
             = {student_lo:.3f}
         """)
+
+        agn.append('\\\\ \\rule{120pt}{0.4pt}')
 
         agn.append(f"""\\\\ {student_lo:.3f}
             < {student_est:.3f}
@@ -146,12 +159,14 @@ def latex():
             \\\\
         """)
 
+        agn.append('\\implies \\\\')
+
         if student_lo < student_est < student_hi:
             agn.append(f'm_x = m_y ~for~ \\alpha = {alpha}')
         else:
             agn.append(f'm_x \\ne m_y ~for~ \\alpha = {alpha}')
 
-    doc.generate_pdf('full', clean_tex=True)
+    doc.generate_pdf('safonov_pz1911_ermse4', clean_tex=True)
 
 
 latex()
